@@ -1,0 +1,428 @@
+﻿@model List<WebAcpAmbiental.Models.Usuario>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdminLTE 3 | DataTables</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/fontawesome-free/css/all.min.css")">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css")">
+    <link rel="stylesheet" href="@Url.Content("~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css")">
+    <link rel="stylesheet" href="@Url.Content("~/plugins/datatables-buttons/css/buttons.bootstrap4.min.css")">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="@Url.Content("~/dist/css/adminlte.min.css")">
+
+    <style>
+
+        .icon-circle {
+            font-size: 16px;
+            padding: 4px;
+            border-radius: 50%;
+            color: white; /* Cambiar a blanco para los iconos */
+        }
+
+        #togglePassword {
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            #togglePassword i {
+                font-size: 1.2rem;
+                color: #6c757d;
+            }
+
+            #togglePassword:hover i {
+                color: #343a40;
+            }
+    </style>
+</head>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <!-- Navbar -->
+       
+     
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1>Usuarios</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="@Url.Action("Principal", "Usuario")">Principal</a></li>
+
+
+                                <li class="breadcrumb-item active">Usuarios</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <!-- Botón para abrir el modal -->
+                        <button type="button" class="btn btn-block btn-success" data-toggle="modal" data-target="#modal-default">
+                            Nuevo Usuario
+                        </button>
+
+                        <!-- Modal largo -->
+                        <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-primary text-white">
+                                        <h4 class="modal-title">Registro de Usuario</h4>
+                                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <!-- Columna 1 -->
+                                                <div class="col-md-6">
+                                                    <!-- Campo de búsqueda para DNI/CE -->
+                                                    <div class="form-group">
+                                                        <label for="cbo-input">Tipo de Documento</label>
+                                                        <div class="input-group">
+                                                            <select class="form-control" id="cbo-input">
+                                                                <option value="dni">DNI</option>
+                                                                <option value="ce">CE</option>
+                                                            </select>
+                                                            <input type="text" class="form-control" id="documento" placeholder="Número de documento">
+                                                            <button class="btn btn-outline-secondary" id="btnbuscar" type="button">
+                                                                <i class="fas fa-search"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Nombres -->
+                                                    <div class="form-group">
+                                                        <label for="nombres">Nombres</label>
+                                                        <input type="text" class="form-control" id="nombres" placeholder="Ingrese nombres" disabled>
+                                                    </div>
+
+                                                    <!-- Apellido Paterno -->
+                                                    <div class="form-group">
+                                                        <label for="apellidopaterno">Apellido Paterno</label>
+                                                        <input type="text" class="form-control" id="apellidopaterno" placeholder="Ingrese apellido paterno" disabled>
+                                                    </div>
+
+                                                    <!-- Apellido Materno -->
+                                                    <div class="form-group">
+                                                        <label for="apellidomaterno">Apellido Materno</label>
+                                                        <input type="text" class="form-control" id="apellidomaterno" placeholder="Ingrese apellido materno" disabled>
+                                                    </div>
+
+                                                    <!-- Fecha de nacimiento -->
+                                                    <div class="form-group">
+                                                        <label for="fechanacimiento">Fecha de Nacimiento</label>
+                                                        <input type="date" class="form-control" id="fechanacimiento">
+                                                    </div>
+
+                                                    <!-- Rol -->
+                                                    <div class="form-group">
+                                                        <label for="rol">Rol</label>
+                                                        <select class="form-control" id="rol">
+                                                            <option value="vendedor">Vendedor</option>
+                                                            <option value="jefe">Jefe</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Columna 2 -->
+                                                <div class="col-md-6">
+                                                    <!-- Estado -->
+                                                    <div class="form-group">
+                                                        <label for="estado">Estado</label>
+                                                        <select class="form-control" id="estado">
+                                                            <option value="activo">Activo</option>
+                                                            <option value="inactivo">Inactivo</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <!-- Usuario -->
+                                                    <div class="form-group">
+                                                        <label for="usuario">Usuario</label>
+                                                        <input type="text" class="form-control" id="usuario" placeholder="Ingrese usuario">
+                                                    </div>
+
+                                                    <!-- Contraseña -->
+                                                    <div class="form-group">
+                                                        <label for="contraseña">Contraseña</label>
+                                                        <input type="password" class="form-control" id="contraseña" placeholder="Ingrese contraseña">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                        <button type="button" class="btn btn-primary" id="saveChangesBtn">Guardar</button>
+                                    </div>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+
+                    
+                    </div>
+
+                </div><!-- /.container-fluid -->
+            </section>
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h1 class="card-title">Listado de Usuarios</h1>
+                                </div>
+                                <div class="card-body">
+                                    <table id="example1" class="table table-bordered table-striped">
+                                        <thead class="text-center">
+                                            <tr>
+                                                <th>Codigo</th>
+                                                <th>Dni</th>
+                                                <th>Nombres Completos</th>
+                                                <th>Fecha de Nacimiento</th>
+                                                <th>Usuario</th>
+                                                <th>Rol</th>
+                                                <th>Estado</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-center">
+                                            @foreach (var usuario in Model)
+                                            {
+                                                <tr>
+                                                    <td>@usuario.IdUsuario</td>
+                                                    <td>@usuario.NrodniUsuario</td>
+                                                    <td>@usuario.NombreUsuario @usuario.ApellidopUsuario @usuario.ApellidomUsuario</td>
+                                                    <td>@usuario.FechNacimiento</td>
+                                                    <td>@usuario.UserUsuario</td>
+                                                    <td>@usuario.IdRolNavigation?.Descripcion</td> 
+                                                    <td>@usuario.IdEstadoNavigation?.Descripcion</td> 
+                                                    <td>
+                                                        <button class="btn btn-link" data-id="@usuario.IdUsuario" onclick="editarUsuario(this)">
+                                                            <i class="fas fa-edit icon-circle text-primary"></i>
+                                                        </button>
+
+
+                                                        <button class="btn btn-link btn-eliminar-usuario" data-id="@usuario.IdUsuario">
+                                                            <i class="fas fa-trash-alt icon-circle text-danger"></i>
+                                                        </button>
+                                                        <button class="btn btn-link" data-id="@usuario.IdUsuario" onclick="abrirModalUsuario(this)">
+                                                            <i class="fas fa-info-circle icon-circle text-success"></i>
+                                                        </button>
+
+
+
+                                                    </td>
+                                                </tr>
+                                            }
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-labelledby="modalEditarUsuarioLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-primary text-white">
+                                                <h4 class="modal-title" id="modalEditarUsuarioLabel">
+                                                    <i class="fas fa-edit me-2"></i> Editar Usuario
+                                                </h4>
+                                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <!-- Columna 1 -->
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="dniEditar">DNI</label>
+                                                                <input type="text" class="form-control" readonly id="dniEditar" >
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="nombresEditar">Nombres</label>
+                                                                <input type="text" class="form-control" readonly id="nombresEditar" >
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="apellidospEditar">Apellido Paterno</label>
+                                                                <input type="text" class="form-control" readonly id="apellidospEditar" >
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="apellidosmEditar">Apellido Materno</label>
+                                                                <input type="text" class="form-control" readonly id="apellidosmEditar" >
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="rolEditar">Rol</label>
+                                                                <select class="form-control" id="rolEditar">
+                                                                    <option value="1">Jefe</option>
+                                                                    <option value="2">Vendedor</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Columna 2 -->
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="estadoEditar">Estado</label>
+                                                                <select class="form-control" id="estadoEditar">
+                                                                    <option value="1">Activo</option>
+                                                                    <option value="2">Inactivo</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="usuarioEditar">Usuario</label>
+                                                                <input type="text" class="form-control" id="usuarioEditar" placeholder="Ingrese usuario">
+                                                            </div>
+                                                            <div class="form-group position-relative">
+                                                                <label for="contraseñaEditar">Contraseña</label>
+                                                                <div class="input-group">
+                                                                    <input type="password"
+                                                                           class="form-control"
+                                                                           id="contraseñaEditar"
+                                                                           placeholder="Ingrese nueva contraseña">
+                                                                    <button type="button"
+                                                                            class="btn btn-outline-secondary"
+                                                                            id="togglePassword"
+                                                                            tabindex="-1"
+                                                                            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+                                                                        <i id="eyeIcon" class="fas fa-eye"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                <button type="button" class="btn btn-primary" id="saveChangesBtnEditar">Guardar Cambios</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+
+                                <div class="modal fade" id="modalUsuarioDetalle" tabindex="-1" aria-labelledby="modalUsuarioLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content shadow-lg border-0">
+                                            <div class="modal-header bg-primary text-white">
+                                                <h5 class="modal-title" id="modalUsuarioLabel">
+                                                    <i class="fas fa-user-circle me-2"></i> Detalles del Usuario
+                                                </h5>
+                                               
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-4 text-center mt-5 mb-5">
+                                                        <i class="fas fa-user fa-8x text-secondary"></i>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <div class="mb-3">
+                                                            <h6 class="fw-bold">Nombre Completo</h6>
+                                                            <p id="modalNombre" class="text-muted"></p>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <h6 class="fw-bold">Usuario</h6>
+                                                            <p id="modalUsuario" class="text-muted"></p>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <h6 class="fw-bold">Estado</h6>
+                                                            <p id="modalEstado" class="text-muted"></p>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <h6 class="fw-bold">Rol</h6>
+                                                            <p id="modalRol" class="text-muted"></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer bg-light">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+      
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div>
+    <!-- ./wrapper -->
+    <!-- jQuery -->
+    <script src="@Url.Content("~/plugins/jquery/jquery.min.js")"></script>
+    <!-- Bootstrap 4 -->
+    <script src="@Url.Content("~/plugins/bootstrap/js/bootstrap.bundle.min.js")"></script>
+    <!-- DataTables  & Plugins -->
+    <script src="@Url.Content("~/plugins/datatables/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-responsive/js/dataTables.responsive.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/dataTables.buttons.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js")"></script>
+    <script src="@Url.Content("~/plugins/jszip/jszip.min.js")"></script>
+    <script src="@Url.Content("~/plugins/pdfmake/pdfmake.min.js")"></script>
+    <script src="@Url.Content("~/plugins/pdfmake/vfs_fonts.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.html5.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.print.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.colVis.min.js")"></script>
+    <!-- AdminLTE App -->
+    <script src="@Url.Content("~/dist/js/adminlte.min.js")"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="@Url.Content("~/dist/js/demo.js")"></script>
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Page specific script -->
+
+    <script src="~/js/Usuario.js" asp-append-version="true"></script>
+    <script>
+       
+    </script>
+</body>
+</html>

@@ -1,0 +1,889 @@
+﻿@model List<WebAcpAmbiental.Models.Programacion>
+
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var gestion = ViewBag.Gestion as IEnumerable<dynamic>;
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdminLTE 3 | DataTables</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/fontawesome-free/css/all.min.css")">
+
+    <!-- DataTables -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css")">
+    <link rel="stylesheet" href="@Url.Content("~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css")">
+    <link rel="stylesheet" href="@Url.Content("~/plugins/datatables-buttons/css/buttons.bootstrap4.min.css")">
+
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/daterangepicker/daterangepicker.css")">
+
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css")">
+
+    <!-- Bootstrap Color Picker -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css")">
+
+    <!-- Select2 -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/select2/css/select2.min.css")">
+    <link rel="stylesheet" href="@Url.Content("~/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css")">
+
+    <!-- Bootstrap4 Duallistbox -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css")">
+
+    <!-- BS Stepper -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/bs-stepper/css/bs-stepper.min.css")">
+
+    <!-- dropzonejs -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/dropzone/min/dropzone.min.css")">
+
+    <!-- fullCalendar -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/fullcalendar/main.css")">
+
+    <!-- Theme style -->
+    <link rel="stylesheet" href="@Url.Content("~/dist/css/adminlte.min.css")">
+
+
+    <style>
+
+        .icon-circle {
+            font-size: 16px;
+            padding: 4px;
+            border-radius: 50%;
+            color: white; /* Cambiar a blanco para los iconos */
+        }
+
+        .no-informacion {
+            background-color: white;
+        }
+
+        .con-informacion {
+            background-color: #e0f7e0; /* Verde suave */
+        }
+
+      
+  
+
+
+    </style>
+</head>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+         @if (ViewBag.Rol == "Jefe")
+        {
+            <!-- Content Wrapper. Contains page content -->
+            <div class="content-wrapper">
+                <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1>Calendar</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item active">Calendar</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div><!-- /.container-fluid -->
+            </section>
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="sticky-top mb-3">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Cantidad de Distritos por Cliente</h4>
+                                    </div>
+                                        <div class="card-body">
+                                            <label for="vendedores">Seleccione un Vendedor:</label>
+                                            <select id="vendedores" class="form-control">
+                                                <option value="">-- Seleccionar --</option>
+                                            </select>
+                                            <div id="external-events" class="mt-3"></div>
+                                        </div>
+
+                                    <!-- /.card-body -->
+                                </div>
+                                <!-- /.card -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Create Event</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <button id="guardar-programacion" class="btn btn-primary">Guardar Programación</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-md-9">
+                            <div class="card card-primary">
+                                <div class="card-body p-0">
+                                    <!-- THE CALENDAR -->
+                                    <div id="calendar"></div>
+                                </div>
+                                <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                </div><!-- /.container-fluid -->
+            </section>
+            <!-- /.content -->
+        </div>
+        }
+           @if (ViewBag.Rol == "Vendedor")
+        {
+            <div class="content-wrapper">
+                <!-- Content Header (Page header) -->
+                <section class="content-header">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-sm-6">
+                                <h1>Programación</h1>
+                            </div>
+                            
+                            <div class="col-sm-6">
+                                <ol class="breadcrumb float-sm-right">
+                                    <li class="breadcrumb-item"><a href="@Url.Action("Principal", "Programacion")">Principal</a></li>
+
+
+                                    <li class="breadcrumb-item active">Programacion</li>
+                                </ol>
+                            </div>
+                        </div>
+                     
+
+                    </div><!-- /.container-fluid -->
+                </section>
+
+                <!-- Main content -->
+                <section class="content">
+                    <div class="container-fluid">
+
+                        <div class="col-12 col-sm-12">
+                            <div class="card card-primary card-tabs">
+                                <div class="card-header p-0 pt-1">
+                                    <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">Listado de Programaciones</a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="custom-tabs-one-settings-tab" data-toggle="pill" href="#custom-tabs-one-settings" role="tab" aria-controls="custom-tabs-one-settings" aria-selected="false">Listado de Proximas Visitas</a>
+                                        </li>
+                                       
+
+                                    </ul>
+                                </div>
+                                <div class="card-body">
+                                    <div class="tab-content" id="custom-tabs-one-tabContent">
+                                        <div class="tab-pane fade active show" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
+
+                                            <div class="row">
+                                                <div class="col-12">
+
+                                                    <div class="card">
+                                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                                            <h1 class="card-title">Listado de Programaciones</h1>
+                                                            <div class="form-group">
+                                                                <label>Seleccionar Fecha:</label>
+                                                                <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                                                    <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate" />
+                                                                    <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <button class="btn btn-primary" data-toggle="modal" data-target="#programacionModal"
+                                                                    data-idusuario="@ViewBag.IdUsuario">
+                                                                Ver Programación
+                                                            </button>
+
+                                                        </div>
+                                                        <div class="modal fade" id="programacionModal" tabindex="-1" role="dialog" aria-labelledby="programacionModalLabel" aria-hidden="true">
+                                                            <div class="modal-dialog modal-lg" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="programacionModalLabel">Programación por Vendedor</h5>
+                                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <table class="table table-bordered">
+                                                                            <thead>
+                                                                                <tr>
+
+                                                                                    <th>Día</th>
+                                                                                    <th>Distrito</th>
+                                                                                    <th>Cantidad</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody id="programacionTableBody">
+                                                                                <!-- Datos dinámicos -->
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- /.card-header -->
+                                                        <div class="card-body">
+                                                            <table id="example1" class="table table-bordered">
+                                                                <thead class="text-center">
+                                                                    <tr class="text-center">
+                                                                        <th>Horario</th>
+                                                                        <th>Dia</th>
+
+                                                                        <th>Razon Social</th>
+                                                                        <th>Nro Documento</th>
+                                                                        <th>Contacto</th>
+                                                                        <th>Celular Contacto</th>
+                                                                        <th>Resultado</th>
+                                                                        <th>Proxima Visita</th>
+                                                                        <th>Comentario</th>
+
+                                                                        <th>Estado</th>
+                                                                        <th>Acciones</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="text-center">
+                                                                    @foreach (var programacion in Model)
+                                                                    {
+                                                                        var estado = string.IsNullOrEmpty(programacion.IdGestionNavigation?.Descripcion) ? "Pendiente" : "Trabajado";
+                                                                        <tr class="text-center @(string.IsNullOrEmpty(programacion.IdGestionNavigation?.Descripcion) ? "no-informacion" : "con-informacion")">
+                                                                            <td>@(string.IsNullOrEmpty(programacion.Horario) ? "No hay información" : programacion.Horario)</td>
+                                                                            <td>@(string.IsNullOrEmpty(programacion.Dia) ? "No hay información" : programacion.Dia)</td>
+                                                                            <td>@(string.IsNullOrEmpty(programacion.IdClienteNavigation?.NombreCompleto) ? "No hay información" : programacion.IdClienteNavigation.NombreCompleto)</td>
+                                                                            <td>@(string.IsNullOrEmpty(programacion.IdClienteNavigation?.NrodocumentoCliente) ? "No hay información" : programacion.IdClienteNavigation.NrodocumentoCliente)</td>
+                                                                            <td>
+                                                                                @((string.IsNullOrEmpty(programacion.IdClienteNavigation?.ApellidopContacto) &&
+                                                                                    string.IsNullOrEmpty(programacion.IdClienteNavigation?.ApellidomContacto) &&
+                                                                                    string.IsNullOrEmpty(programacion.IdClienteNavigation?.NombreContacto))
+                                                                                    ? "No hay información"
+                                                                                    : $"{programacion.IdClienteNavigation?.ApellidopContacto} {programacion.IdClienteNavigation?.ApellidomContacto} {programacion.IdClienteNavigation?.NombreContacto}")
+                                                                            </td>
+                                                                            <td>@(string.IsNullOrEmpty(programacion.IdClienteNavigation?.CelularContacto) ? "No hay información" : programacion.IdClienteNavigation.CelularContacto)</td>
+                                                                            <td>@(string.IsNullOrEmpty(programacion.IdGestionNavigation?.Descripcion) ? "No hay información" : programacion.IdGestionNavigation.Descripcion)</td>
+                                                                            <td>@(programacion.ProximaVisita == null ? "No hay información" : programacion.ProximaVisita.Value.ToString("yyyy-MM-dd HH:mm"))</td>
+                                                                            <td>@(string.IsNullOrEmpty(programacion.Comentario) ? "No hay información" : programacion.Comentario)</td>
+                                                                            <td>@(estado)</td>  <!-- Aquí cambiamos el estado -->
+                                                                            <td class="text-center">
+                                                                                <button class="btn btn-link" data-id="@programacion.IdProgramacion" onclick="editarProgramacion(this)">
+                                                                                    <i class="fas fa-edit icon-circle text-primary"></i>
+                                                                                </button>
+
+                                                                            </td>
+                                                                        </tr>
+                                                                    }
+
+                                                                </tbody>
+
+
+                                                            </table>
+                                                        </div>
+
+                                                        <div class="modal fade" id="modalEditarProgramacion" tabindex="-1" aria-labelledby="modalEditarProgramacionLabel" aria-hidden="true">
+                                                            <div class="modal-dialog modal-lg">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header bg-primary text-white">
+                                                                        <h4 class="modal-title" id="modalProgramacionRutaLabel"> Editar Programacion</h4>
+                                                                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">×</span>
+                                                                        </button>
+                                                                    </div>
+
+                                                                    <div class="modal-body">
+                                                                        <div class="card-body">
+                                                                            <div class="row">
+                                                                                <!-- Columna 1 -->
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="gestion">Gestión</label>
+                                                                                        <select class="form-control" id="gestion" name="IdGestion">
+                                                                                            <option value="">Seleccione un Resultado</option>
+                                                                                            @foreach (var gto in gestion)
+                                                                                            {
+                                                                                                <option value="@gto.IdGestion">@gto.Descripcion</option>
+                                                                                            }
+                                                                                        </select>
+                                                                                    </div>
+
+
+                                                                                </div>
+                                                                                <!-- Columna 2 -->
+                                                                                <div class="col-md-6">
+
+
+                                                                                    <div class="form-group">
+                                                                                        <label>Proxima Visita:</label>
+                                                                                        <div class="input-group date" id="reservationdatetime" data-target-input="nearest">
+                                                                                            <input type="text" id="proximaVisita" class="form-control datetimepicker-input" data-target="#reservationdatetime" />
+                                                                                            <div class="input-group-append" data-target="#reservationdatetime" data-toggle="datetimepicker">
+                                                                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                                <!-- Columna 2 -->
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="comentario">Comentario</label>
+                                                                                        <textarea class="form-control" id="comentario" name="Comentario" rows="3"></textarea>
+                                                                                    </div>
+
+
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="modal-footer justify-content-between">
+                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                        <button type="button" class="btn btn-primary" id="saveChangesBtnEditar">Editar</button>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.modal-content -->
+                                                            </div>
+                                                            <!-- /.modal-dialog -->
+                                                        </div>
+
+
+
+                                                        <!-- /.card-body -->
+                                                    </div>
+
+
+                                                    <!-- /.card -->
+                                                </div>
+                                                <!-- /.col -->
+                                            </div>
+
+                                        </div>
+
+
+
+                                        <div class="tab-pane fade" id="custom-tabs-one-settings" role="tabpanel" aria-labelledby="custom-tabs-one-settings-tab">
+
+                                            <div class="row">
+                                                <div class="col-12">
+
+                                                    <div class="card">
+                                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                                            <h1 class="card-title">Listado de Proximas Visitas</h1>
+                                                        
+                                                        
+
+                                                        </div>
+                                                      
+                                                        <!-- /.card-header -->
+                                                        <div class="card-body">
+                                                            <table id="example2" class="table table-bordered">
+                                                                <thead class="text-center">
+                                                                    <tr class="text-center">
+                                                                        <th>Horario</th>
+                                                                        <th>Dia</th>
+                                                                        <th>Razon Social</th>
+                                                                        <th>Nro Documento</th>
+                                                                        <th>Contacto</th>
+                                                                        <th>Celular Contacto</th>
+                                                                        <th>Resultado</th>
+                                                                        <th>Proxima Visita</th>
+                                                                        <th>Comentario</th>
+
+                                                                        <th>Estado</th>
+                                                                        <th>Acciones</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="text-center">
+                                                                    @foreach (var programacion in Model.Where(p => p.ProximaVisita != null).OrderByDescending(p => p.Dia)) // Filtra y ordena por día descendentemente
+                                                                    {
+                                                                        var estado = string.IsNullOrEmpty(programacion.IdGestionNavigation?.Descripcion) ? "Pendiente" : "Trabajado";
+                                                                        <tr class="text-center @(string.IsNullOrEmpty(programacion.IdGestionNavigation?.Descripcion) ? "no-informacion" : "con-informacion")">
+                                                                            <td>@(string.IsNullOrEmpty(programacion.Horario) ? "No hay información" : programacion.Horario)</td>
+                                                                            <td>@(string.IsNullOrEmpty(programacion.Dia) ? "No hay información" : programacion.Dia)</td>
+                                                                            <td>@(string.IsNullOrEmpty(programacion.IdClienteNavigation?.NombreCompleto) ? "No hay información" : programacion.IdClienteNavigation.NombreCompleto)</td>
+                                                                            <td>@(string.IsNullOrEmpty(programacion.IdClienteNavigation?.NrodocumentoCliente) ? "No hay información" : programacion.IdClienteNavigation.NrodocumentoCliente)</td>
+                                                                            <td>
+                                                                                @((string.IsNullOrEmpty(programacion.IdClienteNavigation?.ApellidopContacto) &&
+                                                                                    string.IsNullOrEmpty(programacion.IdClienteNavigation?.ApellidomContacto) &&
+                                                                                    string.IsNullOrEmpty(programacion.IdClienteNavigation?.NombreContacto))
+                                                                                    ? "No hay información"
+                                                                                    : $"{programacion.IdClienteNavigation?.ApellidopContacto} {programacion.IdClienteNavigation?.ApellidomContacto} {programacion.IdClienteNavigation?.NombreContacto}")
+                                                                            </td>
+                                                                            <td>@(string.IsNullOrEmpty(programacion.IdClienteNavigation?.CelularContacto) ? "No hay información" : programacion.IdClienteNavigation.CelularContacto)</td>
+                                                                            <td>@(string.IsNullOrEmpty(programacion.IdGestionNavigation?.Descripcion) ? "No hay información" : programacion.IdGestionNavigation.Descripcion)</td>
+                                                                            <td>@(programacion.ProximaVisita?.ToString("yyyy-MM-dd HH:mm"))</td>
+                                                                            <td>@(string.IsNullOrEmpty(programacion.Comentario) ? "No hay información" : programacion.Comentario)</td>
+                                                                            <td>@(estado)</td>
+                                                                        @*    <td class="text-center">
+                                                                                <button class="btn btn-link" data-id="@programacion.IdProgramacion" onclick="editarProgramacion(this)">
+                                                                                    <i class="fas fa-edit icon-circle text-primary"></i>
+                                                                                </button>
+                                                                            </td>*@
+                                                                        </tr>
+                                                                    }
+                                                                </tbody>
+
+
+
+                                                            </table>
+                                                        </div>
+
+                                                     
+
+
+                                                        <!-- /.card-body -->
+                                                    </div>
+
+
+                                                    <!-- /.card -->
+                                                </div>
+                                                <!-- /.col -->
+                                            </div>
+
+                                        
+
+                                        </div>
+
+                                       
+
+                                    </div>
+                                </div>
+                                <!-- /.card -->
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+
+
+                      
+                        <!-- /.row -->
+                    </div>
+                    <!-- /.container-fluid -->
+                </section>
+                <!-- /.content -->
+            </div>
+            
+        }
+
+
+
+
+    </div>
+    <!-- ./wrapper -->
+    <!-- jQuery -->
+    <!-- jQuery UI -->
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+   
+
+
+
+
+
+
+    <!-- jQuery -->
+    <script src="@Url.Content("~/plugins/jquery/jquery.min.js")"></script>
+    <script src="@Url.Content("~/plugins/jquery-ui/jquery-ui.min.js")"></script>
+
+    <!-- Bootstrap 4 -->
+    <script src="@Url.Content("~/plugins/bootstrap/js/bootstrap.bundle.min.js")"></script>
+
+    <!-- Select2 -->
+    <script src="@Url.Content("~/plugins/select2/js/select2.full.min.js")"></script>
+
+    <!-- Bootstrap4 Duallistbox -->
+    <script src="@Url.Content("~/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js")"></script>
+
+    <!-- InputMask -->
+    <script src="@Url.Content("~/plugins/moment/moment.min.js")"></script>
+    <script src="@Url.Content("~/plugins/inputmask/jquery.inputmask.min.js")"></script>
+
+    <!-- Date-range-picker -->
+    <script src="@Url.Content("~/plugins/daterangepicker/daterangepicker.js")"></script>
+
+    <!-- Bootstrap Color Picker -->
+    <script src="@Url.Content("~/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js")"></script>
+
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="@Url.Content("~/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js")"></script>
+
+    <!-- Bootstrap Switch -->
+    <script src="@Url.Content("~/plugins/bootstrap-switch/js/bootstrap-switch.min.js")"></script>
+
+    <!-- BS-Stepper -->
+    <script src="@Url.Content("~/plugins/bs-stepper/js/bs-stepper.min.js")"></script>
+
+    <!-- Dropzonejs -->
+    <script src="@Url.Content("~/plugins/dropzone/min/dropzone.min.js")"></script>
+
+    <!-- fullCalendar -->
+    <script src="@Url.Content("~/plugins/fullcalendar/main.js")"></script>
+
+    <!-- DataTables & Plugins -->
+    <script src="@Url.Content("~/plugins/datatables/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-responsive/js/dataTables.responsive.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/dataTables.buttons.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js")"></script>
+    <script src="@Url.Content("~/plugins/jszip/jszip.min.js")"></script>
+    <script src="@Url.Content("~/plugins/pdfmake/pdfmake.min.js")"></script>
+    <script src="@Url.Content("~/plugins/pdfmake/vfs_fonts.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.html5.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.print.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.colVis.min.js")"></script>
+
+    <!-- AdminLTE App -->
+    <script src="@Url.Content("~/dist/js/adminlte.min.js")"></script>
+
+    <!-- AdminLTE for demo purposes -->
+    <script src="@Url.Content("~/dist/js/demo.js")"></script>
+
+
+    <!-- Page specific script -->
+    <script src="~/js/Programacion.js" asp-append-version="true"></script>
+    @*datepicker*@
+
+    <script>
+    // Obtener idUsuario desde el ViewBag de Razor
+    var idUsuario = @ViewBag.IdUsuario; 
+</script>
+
+    <script>
+        $(function () {
+            // Inicializar el datepicker
+            $('#reservationdate').datetimepicker({
+                format: 'YYYY-MM-DD', // Formato de fecha
+                locale: 'es',         // Idioma en español
+            });
+
+            // Inicializar DataTables
+            const table = $('#example1').DataTable({
+                "responsive": true,
+                "lengthChange": true,  // Permitir cambiar el número de registros por página
+                "pageLength": 10,      // Mostrar 10 registros por página
+                "autoWidth": false,
+                "buttons": ["excel", "pdf"],
+                "paging": true,        // Habilitar paginación
+                "searching": false,    // Desactivar la búsqueda global si no es necesaria
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json" // Idioma en español
+                }
+            });
+
+            // Detectar cambios en la fecha seleccionada
+            $('#reservationdate').on('change.datetimepicker', function (e) {
+                const selectedDate = e.date.format('YYYY-MM-DD'); // Obtener la fecha seleccionada
+                filtrarPorDia(selectedDate, table); // Llamar a la función para filtrar
+            });
+        });
+
+        // Función para filtrar las programaciones en la tabla
+        function filtrarPorDia(fechaSeleccionada, table) {
+            table.rows().every(function () {
+                const rowData = this.data(); // Obtener los datos de la fila
+                const dia = rowData[1]?.trim(); // Obtener el valor de la columna 'Día' (según índice)
+
+                // Comparar la fecha seleccionada con el día en la fila
+                if (dia === fechaSeleccionada) {
+                    $(this.node()).show(); // Mostrar la fila si coincide
+                } else {
+                    $(this.node()).hide(); // Ocultar la fila si no coincide
+                }
+            });
+
+            // Redibujar la tabla para ajustar la paginación
+            table.draw();
+        }
+
+         $(function () {
+
+            //Date and time picker
+            $('#reservationdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
+         })
+
+
+    </script>
+
+    @*obtener del cbo de vendedores*@
+    <script>
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            cargarVendedores();
+
+            const cboVendedores = document.getElementById("vendedores");
+            cboVendedores.addEventListener("change", function () {
+                const idVendedor = cboVendedores.value;
+                if (idVendedor) {
+                    cargarDistritosPorVendedor(idVendedor);
+                } else {
+                    document.getElementById("external-events").innerHTML = "";
+                }
+            });
+        });
+
+        function cargarVendedores() {
+            fetch('/Programacion/GetVendedores') // Endpoint del controlador
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    const cboVendedores = document.getElementById("vendedores");
+                    data.forEach(vendedor => {
+                        const option = document.createElement("option");
+                        option.value = vendedor.idUsuario;
+                        option.textContent = vendedor.nombreCompleto;
+                        cboVendedores.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Error al cargar los vendedores:", error));
+        }
+
+        function cargarDistritosPorVendedor(idVendedor) {
+            fetch(`/Programacion/GetDistritosPorVendedor?idVendedor=${idVendedor}`)
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    const container = document.getElementById("external-events");
+                    container.innerHTML = ""; // Limpia los distritos anteriores
+
+                    data.forEach(distrito => {
+                        let clientes = distrito.cantidadClientes;
+                        let distritoNombre = distrito.distrito;
+
+                        // Si el número de clientes es mayor a 30, lo dividimos
+                        if (clientes > 30) {
+                            let numDivisiones = Math.ceil(clientes / 30); // Cantidad de divisiones
+                            let clientesRestantes = clientes;
+
+                            // Creamos nuevos distritos divididos
+                            for (let i = 0; i < numDivisiones; i++) {
+                                let clientesPorDistrito = (clientesRestantes > 30) ? 30 : clientesRestantes; // Si quedan menos de 30, tomamos los restantes
+
+                                const eventDiv = document.createElement("div");
+                                eventDiv.className = "external-event";
+                                eventDiv.textContent = `${distritoNombre} (Parte ${i + 1}): ${clientesPorDistrito} clientes`;
+                                container.appendChild(eventDiv);
+
+                                clientesRestantes -= clientesPorDistrito; // Reducir la cantidad de clientes restantes
+                            }
+                        } else {
+                            // Si el distrito tiene 30 o menos clientes, lo mostramos como está
+                            const eventDiv = document.createElement("div");
+                            eventDiv.className = "external-event";
+                            eventDiv.textContent = `${distritoNombre} : ${clientes} clientes`;
+                            container.appendChild(eventDiv);
+                        }
+                    });
+                })
+                .catch(error => console.error("Error al cargar los distritos:", error));
+        }
+
+
+    </script>
+
+    @*el calendar*@
+    <script>
+        $(function () {
+            var eventosPorDia = {}; // Almacenar eventos agrupados por día y la cantidad de clientes por distrito.
+
+            var Calendar = FullCalendar.Calendar;
+            var Draggable = FullCalendar.Draggable;
+
+            var containerEl = document.getElementById('external-events');
+            var calendarEl = document.getElementById('calendar');
+
+            // Inicializamos los eventos externos
+            new Draggable(containerEl, {
+                itemSelector: '.external-event',
+                eventData: function (eventEl) {
+                    return {
+                        title: eventEl.innerText, // Título del evento
+                    };
+                }
+            });
+
+            // Inicializar el calendario
+            var calendar = new Calendar(calendarEl, {
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                themeSystem: 'bootstrap',
+                editable: true,
+                droppable: true,
+                drop: function (info) {
+                    var dia = info.dateStr; // Fecha seleccionada en formato YYYY-MM-DD
+                    var textoEvento = info.draggedEl.innerText; // Texto completo del evento
+                    var cantidadClientes = 0; // Inicializar la cantidad de clientes
+
+                    // Extraer el número antes de "clientes" utilizando expresión regular
+                    var match = textoEvento.match(/: (\d+) clientes/);
+                    if (match) {
+                        cantidadClientes = parseInt(match[1], 10); // Capturar el número
+                    } else {
+                        alert("El formato del texto es incorrecto. Debe ser 'Distrito : N clientes'.");
+                        return;
+                    }
+
+                    var distrito = textoEvento.split(":")[0].trim(); // Capturar el nombre del distrito antes de ":"
+                    distrito = distrito.replace(/\s*\(Parte\s*\d+\)/, '').trim();
+
+                    if (!dia || !distrito) {
+                        alert("Debe proporcionar un día y un distrito válido.");
+                        return;
+                    }
+
+                    // Verificar si el evento ya existe para el día y distrito
+                    if (!eventosPorDia[dia]) {
+                        eventosPorDia[dia] = {};
+                    }
+
+                    // Si el distrito ya está registrado, aumentar la cantidad de clientes
+                    if (eventosPorDia[dia][distrito]) {
+                        eventosPorDia[dia][distrito].cantidadClientes += cantidadClientes;
+                    } else {
+                        // Si no está registrado, inicializarlo con la cantidad de clientes
+                        eventosPorDia[dia][distrito] = { cantidadClientes: cantidadClientes };
+                    }
+
+                    eliminarDistritoDelCard(info.draggedEl);
+                    console.log("Evento añadido:", { dia: dia, distrito: distrito, cantidadClientes: cantidadClientes });
+                }
+            });
+
+            calendar.render();
+
+            // Función para eliminar un distrito del card (solo el arrastrado)
+            function eliminarDistritoDelCard(distritoElemento) {
+                $(distritoElemento).remove();
+            }
+
+            // Función para obtener el ID de un distrito por su nombre
+            async function obtenerIdDistrito(nombreDistrito) {
+                return new Promise((resolve, reject) => {
+                    $.ajax({
+                        url: '/Programacion/ObtenerIdDistritoPorNombre',
+                        method: 'GET',
+                        data: { nombreDistrito: nombreDistrito },
+                        success: function (response) {
+                            resolve(response.idDistrito);
+                        },
+                        error: function (xhr) {
+                            reject(`Error al obtener el ID del distrito '${nombreDistrito}': ${xhr.responseText}`);
+                        }
+                    });
+                });
+            }
+            $('#guardar-programacion').click(async function () {
+                var registros = [];
+
+                try {
+                    for (const [dia, distritos] of Object.entries(eventosPorDia)) {
+                        for (const [distrito, datos] of Object.entries(distritos)) {
+                            const idDistrito = await obtenerIdDistrito(distrito);
+
+                            if (!idDistrito) {
+                                alert(`No se encontró el distrito '${distrito}'.`);
+                                continue;
+                            }
+
+                            // Aquí se asegura que la propiedad de los datos esté bien estructurada
+                            registros.push({
+                                Dia: dia,                    // Asegurarse de que el formato sea correcto
+                                IdDistrito: idDistrito,      // El ID del distrito
+                                CantidadClientes: datos.cantidadClientes  // La cantidad de clientes que se está enviando
+                            });
+                        }
+                    }
+
+                    // Verificar que haya registros
+                    if (registros.length > 0) {
+                        $.ajax({
+                            url: '/Programacion/GuardarProgramacion',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(registros),  // Asegúrate de que se esté enviando un array de objetos
+                            success: function (response) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '¡Programación guardada exitosa!',
+                                    text: 'La programación para este mes se ha guardado correctamente.',
+                                    confirmButtonText: 'Aceptar'
+                                }).then(() => {
+                                    $('#guardar-programacion').prop('disabled', true);
+                                });
+                            },
+                            error: function (xhr) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: `Error al guardar la programación: ${xhr.responseText}`,
+                                });
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Advertencia',
+                            text: 'No hay registros válidos para guardar.',
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error,
+                    });
+                }
+            });
+
+
+        });
+
+
+
+
+
+
+    </script>
+
+</body>
+</html>
+

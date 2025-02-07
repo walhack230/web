@@ -1,0 +1,551 @@
+﻿@model List<WebAcpAmbiental.Models.DireccionAtencion>
+
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var departamentos = ViewBag.Departamentos as IEnumerable<dynamic>;
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdminLTE 3 | DataTables</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/fontawesome-free/css/all.min.css")">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css")">
+    <link rel="stylesheet" href="@Url.Content("~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css")">
+    <link rel="stylesheet" href="@Url.Content("~/plugins/datatables-buttons/css/buttons.bootstrap4.min.css")">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="@Url.Content("~/dist/css/adminlte.min.css")">
+
+    <style>
+
+        .icon-circle {
+            font-size: 16px;
+            padding: 4px;
+            border-radius: 50%;
+            color: white; /* Cambiar a blanco para los iconos */
+        }
+
+    </style>
+</head>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <!-- Navbar -->
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1>Direccion de Atencion</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="@Url.Action("Principal", "DireccionAtencion")">Principal</a></li>
+
+
+                                <li class="breadcrumb-item active">Direccion Atencion</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <!-- Botón para abrir el modal -->
+                        <button type="button" class="btn btn-block btn-success" data-toggle="modal" data-target="#modal-default">
+                            Nueva Direccion
+                        </button>
+
+                        <!-- Modal largo -->
+                        <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-primary text-white">
+                                        <h4 class="modal-title">Registro de Direccion</h4>
+                                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <div class="card-body">
+
+
+                                            <h1 class="mb-4">Dirección de Atención</h1>
+
+
+                                            <!-- Primera fila: Departamento, Provincia, Distrito -->
+                                            <div class="form-row mb-3">
+                                                <div class="form-group col-md-4">
+                                                    <label for="departamentoDireccion">Departamento</label>
+                                                    <select class="form-control selectpicker" id="departamentoDireccion" data-live-search="true">
+                                                        <option value="">Seleccione un Departamento</option>
+                                                       
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-md-4">
+                                                    <label for="provinciaDireccion">Provincia</label>
+                                                    <select class="form-control selectpicker" id="provinciaDireccion" data-live-search="true">
+                                                        <option value="">Seleccione una provincia</option>
+                                                        <!-- Opciones dinámicas aquí -->
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-md-4">
+                                                    <label for="distritoDireccion">Distrito</label>
+                                                    <select class="form-control selectpicker" id="distritoDireccion" data-live-search="true">
+                                                        <option value="">Seleccione un distrito</option>
+                                                        <!-- Opciones dinámicas aquí -->
+                                                    </select>
+                                                </div>
+                                            </div>
+
+
+
+
+                                            <div class="form-row mb-3">
+                                                <div class="form-group col-md-6">
+                                                    <label for="coordenadas">Coordenadas</label>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="coordenadas" placeholder="Latitud, Longitud" readonly>
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-primary" type="button" data-toggle="modal" data-target="#mapModal">
+                                                                <i class="fas fa-map-marker-alt"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="mapModal" tabindex="-1" role="dialog" aria-labelledby="mapModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="mapModalLabel">Seleccionar Ubicación</h5>
+                                                            
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <input id="searchBox" class="form-control mb-3" type="text" placeholder="Buscar dirección o lugar" />
+                                                            <div id="map" style="height: 400px; width: 100%;"></div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            
+                                                            <button type="button" class="btn btn-primary" id="saveLocation">Guardar Ubicación</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <!-- Cuarta fila: Contacto y Ventana de Atención -->
+                                            <div class="form-row mb-3">
+                                               
+
+                                                <div class="form-group col-md-6">
+                                                    <label for="ventanaatencion">Ventana de Atención</label>
+                                                    <input type="text" class="form-control" id="ventanaatencion" placeholder="Ventana de Atención">
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label for="clienteDireccion">Cliente</label>
+                                                    <select class="form-control selectpicker" id="clienteDireccion" data-live-search="true">
+                                                        <option value="">Seleccione el cliente</option>
+                                                        <!-- Opciones dinámicas aquí -->
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Quinta fila: Código Postal, Urb, Nro, Via -->
+                                            <div class="form-row mb-3">
+                                                <div class="form-group col-md-3">
+                                                    <label for="codigopostal">Código Postal</label>
+                                                    <input type="text" class="form-control" id="codigopostal" placeholder="Código Postal">
+                                                </div>
+
+                                                <div class="form-group col-md-3">
+                                                    <label for="urb">Urb</label>
+                                                    <input type="text" class="form-control" id="urb" placeholder="Urb">
+                                                </div>
+
+                                                <div class="form-group col-md-3">
+                                                    <label for="nro">Nro</label>
+                                                    <input type="text" class="form-control" id="nro" placeholder="Número">
+                                                </div>
+
+                                                <div class="form-group col-md-3">
+                                                    <label for="via">Via</label>
+                                                    <input type="text" class="form-control" id="via" placeholder="Via">
+                                                </div>
+                                            </div>
+
+                                            <!-- Sexta fila: Nombre de la Calle -->
+                                            <div class="form-row mb-3">
+                                                <div class="form-group col-md-12">
+                                                    <label for="nombrecalle">Nombre de la Calle</label>
+                                                    <input type="text" class="form-control" id="nombrecalle" placeholder="Nombre de la Calle">
+                                                </div>
+                                            </div>
+
+                                           
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                        <button type="button" class="btn btn-primary" id="saveChangesBtn">Guardar</button>
+                                    </div>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+
+
+                    </div>
+
+                </div><!-- /.container-fluid -->
+            </section>
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+
+                    <div class="row">
+                        <div class="col-12">
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h1 class="card-title">Listado de Rutas</h1>
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body">
+                                    <table id="example1" class="table table-bordered table-striped">
+                                        <thead class="text-center">
+                                            <tr class="text-center">
+                                                <th>Codigo</th>
+                                                <th>Cliente</th>
+                                                <th>Direccion de la Calle</th>
+                                                <th>Departamento</th>
+                                                <th>Provincia</th>
+                                                <th>Distrito</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-center">
+                                         @foreach (var direccionAtencion in Model)
+                                            {
+                                                <tr class="text-center">
+                                                    <td>@direccionAtencion.IdDireccion</td>
+                                                    <td>@direccionAtencion.IdClienteNavigation?.NombreCompleto</td>
+                                                    <td>@direccionAtencion.CalleDireccion</td>
+                                                    <td>@direccionAtencion.IdDepartamentoNavigation?.NombreDepartamento</td>
+                                                    <td>@direccionAtencion.IdProvinciaNavigation?.NombreProvincia</td>
+                                                    <td>@direccionAtencion.IdDistritoNavigation?.NombreDistrito</td>
+
+                                                   
+                                                    <td class="text-center">
+                                                      @*  <button class="btn btn-link" >
+                                                            <i class="fas fa-edit icon-circle text-primary"></i>
+                                                        </button>*@
+
+                                                        <button class ="btn btn-link btn-eliminar-direccion" data-id="@direccionAtencion.IdDireccion">
+                                                            <i class="fas fa-trash-alt icon-circle text-danger"></i>
+                                                        </button>
+
+                                                        <button class="btn btn-link" data-id="@direccionAtencion.IdDireccion" onclick="abrirModalDireccionAtencion(this)">
+                                                            <i class="fas fa-info-circle icon-circle text-success"></i>
+                                                        </button>
+                                                    </td>
+
+
+                                                </tr>
+
+                                            
+}
+
+                                        </tbody>
+
+                                    </table>
+                                </div>
+
+                                <div class="modal fade" id="modalEditarRuta" tabindex="-1" aria-labelledby="modalEditarRutaLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-primary text-white">
+                                                <h4 class="modal-title" id="modalEditarRutaLabel"> Editar Ruta</h4>
+                                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <!-- Columna 1 -->
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="rutaEditar">Ruta</label>
+                                                                <input type="text" class="form-control" id="rutaEditar" placeholder="Ingresa Ruta">
+                                                            </div>
+
+                                                        </div>
+                                                        <!-- Columna 2 -->
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="estadoEditar">Estado</label>
+                                                                <select class="form-control" id="estadoEditar">
+                                                                    <option value="1">Activo</option>
+                                                                    <option value="2">Inactivo</option>
+                                                                </select>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary" id="saveChangesBtnEditar">Editar</button>
+                                            </div>
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+
+
+                                <div class="modal fade" id="modalDireccionAtencionDetalle" tabindex="-1" aria-labelledby="modalDireccionAtencionLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content shadow-lg border-0">
+                                            <div class="modal-header bg-primary text-white">
+                                                <h5 class="modal-title" id="modalDireccionAtencionLabel">
+                                                    <i class="fas fa-user-circle me-2"></i> Detalles de la Direccion
+                                                </h5>
+
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <!-- Sección: Dirección -->
+                                                        <div class="mb-3">
+                                                            <h6 class="fw-bold">Dirección</h6>
+                                                          
+                                                            <div>
+                                                                <h6>Vía Dirección:</h6>
+                                                                <p id="modalViaDireccion"></p>
+                                                            </div>
+                                                            <div>
+                                                                <h6>Calle Dirección:</h6>
+                                                                <p id="modalCalleDireccion" class="text-muted"></p>
+                                                            </div>
+                                                            <div>
+                                                                <h6>Número Dirección:</h6>
+                                                                <p id="modalNroDireccion" class="text-muted"></p>
+                                                            </div>
+                                                            <div>
+                                                                <h6>Urbanización Dirección:</h6>
+                                                                <p id="modalUrbDireccion" class="text-muted"></p>
+                                                            </div>
+                                                            <div>
+                                                                <h6>Código Postal Dirección:</h6>
+                                                                <p id="modalCodpostalDireccion" class="text-muted"></p>
+                                                            </div>
+                                                            <div>
+                                                                <h6>Coordenadas Dirección:</h6>
+                                                                <p id="modalCoordenadasDireccion" class="text-muted"></p>
+                                                            </div>
+                                                          
+                                                        </div>
+
+                                                      
+
+                                                        <!-- Sección: Ubicación -->
+                                                        <div class="mb-3">
+                                                            <h6 class="fw-bold">Ubicación</h6>
+                                                            <div>
+                                                                <h6>Departamento:</h6>
+                                                                <p id="modalDepartamento" class="text-muted"></p>
+                                                            </div>
+                                                            <div>
+                                                                <h6>Provincia:</h6>
+                                                                <p id="modalProvincia" class="text-muted"></p>
+                                                            </div>
+                                                            <div>
+                                                                <h6>Distrito:</h6>
+                                                                <p id="modalDistrito" class="text-muted"></p>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Sección: Cliente -->
+                                                        <div class="mb-3">
+                                                            <h6 class="fw-bold">Cliente</h6>
+                                                            <div>
+                                                                <h6>Nombre del Cliente:</h6>
+                                                                <p id="modalClienteNombre" class="text-muted"></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="modal-footer bg-light">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                </div>
+                <!-- /.container-fluid -->
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div>
+    <!-- ./wrapper -->
+    <!-- jQuery -->
+
+
+    <script>
+
+        let map;
+        let marker;
+        let geocoder;
+
+        function initMap() {
+            // Inicializar mapa
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: -12.046374, lng: -77.042793 }, // Coordenadas iniciales (Lima)
+                zoom: 12,
+            });
+
+            geocoder = new google.maps.Geocoder();
+
+            // Listener para seleccionar ubicación haciendo clic en el mapa
+            map.addListener("click", (event) => {
+                const coords = event.latLng;
+                setMarker(coords);
+                getAddressFromCoords(coords); // Obtener nombre de la ubicación
+            });
+        }
+
+        // Función para establecer marcador
+        function setMarker(location) {
+            if (marker) marker.setMap(null); // Eliminar marcador previo si existe
+
+            marker = new google.maps.Marker({
+                position: location,
+                map: map,
+            });
+
+            // Actualizar el campo de coordenadas con la nueva posición
+            document.getElementById("coordenadas").value = `${location.lat()}, ${location.lng()}`;
+        }
+
+        // Función para obtener dirección a partir de coordenadas
+        function getAddressFromCoords(coords) {
+            geocoder.geocode({ location: coords }, (results, status) => {
+                if (status === "OK" && results[0]) {
+                    const address = results[0].formatted_address;
+                    document.getElementById("nombrecalle").value = address; // Mostrar dirección en el input
+                } else {
+                    document.getElementById("nombrecalle").value = "No se pudo obtener el nombre de la calle.";
+                }
+            });
+        }
+
+        // Buscar dirección usando Geocoding
+        document.getElementById("searchBox").addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                const address = document.getElementById("searchBox").value.trim();
+
+                if (!address) {
+                    alert("Por favor, ingresa una dirección o coordenadas.");
+                    return;
+                }
+
+                // Usar Geocoder para buscar dirección
+                geocoder.geocode({ address: address }, (results, status) => {
+                    if (status === "OK") {
+                        const location = results[0].geometry.location;
+                        map.setCenter(location);
+                        map.setZoom(15);
+                        setMarker(location);
+                        getAddressFromCoords(location); // Obtener nombre de la ubicación
+                    } else {
+                        alert("No se pudo encontrar la ubicación: " + status);
+                    }
+                });
+            }
+        });
+
+        // Guardar ubicación seleccionada y cerrar modal
+        document.getElementById("saveLocation").addEventListener("click", () => {
+            $('#mapModal').modal('hide');
+        });
+
+        // Cargar el mapa cuando la página esté lista
+        document.addEventListener("DOMContentLoaded", () => {
+            initMap();
+        });
+
+
+
+
+    </script>
+
+
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeYuFoBVAwefqpP2lz6AJ4chwdNgD0vDw&libraries=places&callback=initMap"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script src="@Url.Content("~/plugins/jquery/jquery.min.js")"></script>
+    <!-- Bootstrap 4 -->
+    <script src="@Url.Content("~/plugins/bootstrap/js/bootstrap.bundle.min.js")"></script>
+    <!-- DataTables  & Plugins -->
+    <script src="@Url.Content("~/plugins/datatables/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-responsive/js/dataTables.responsive.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/dataTables.buttons.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js")"></script>
+    <script src="@Url.Content("~/plugins/jszip/jszip.min.js")"></script>
+    <script src="@Url.Content("~/plugins/pdfmake/pdfmake.min.js")"></script>
+    <script src="@Url.Content("~/plugins/pdfmake/vfs_fonts.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.html5.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.print.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.colVis.min.js")"></script>
+    <!-- AdminLTE App -->
+    <script src="@Url.Content("~/dist/js/adminlte.min.js")"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="@Url.Content("~/dist/js/demo.js")"></script>
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Page specific script -->
+    <script src="~/js/DireccionAtencion.js" asp-append-version="true"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,350 @@
+﻿@{
+    Layout = null;
+}
+
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    var asignaciones = ViewBag.Asignaciones as IEnumerable<dynamic>;
+}
+    
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Principal</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/fontawesome-free/css/all.min.css")">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="@Url.Content("~/dist/css/adminlte.min.css")">
+    <link rel="icon" href="@Url.Content("~/logoacp2.png")" type="image/png" />
+    <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+    <div class="content-wrapper">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        
+                    @if (ViewBag.Rol == "Jefe")
+        {
+                        <h1 class="m-0">Dashboard</h1>
+        }
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">Dashboard v1</li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+
+        
+            <section class="content">
+                <div class="container-fluid">
+                    
+                    @if (ViewBag.Rol == "Jefe")
+                {
+                    <!-- Small boxes (Stat box) -->
+                    <div class="row">
+                        <div class="col-lg-3 col-6">
+                            <!-- small box -->
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <h3>@ViewBag.CantidadClientes</h3>
+
+                                    <p>Cantidad de CLientes</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <!-- ./col -->
+                        <div class="col-lg-3 col-6">
+                            <!-- small box -->
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <h3>@ViewBag.CantidadVendedores</h3>
+
+                                    <p>Cantidad de Usuarios</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-stats-bars"></i>
+                                </div>
+                                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <!-- ./col -->
+                        <div class="col-lg-3 col-6">
+                            <!-- small box -->
+                            <div class="small-box bg-warning">
+                                <div class="inner">
+                                    <h3>@ViewBag.CantidadClientesParticulares</h3>
+
+                                    <p>Cantidad de Clientes particulares</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-person-add"></i>
+                                </div>
+                                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <!-- ./col -->
+                        <div class="col-lg-3 col-6">
+                            <!-- small box -->
+                            <div class="small-box bg-danger">
+                                <div class="inner">
+                                    <h3>@ViewBag.CantidadClientesJuridicos</h3>
+
+                                    <p>Cantidad de Clientes juridicos</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-pie-graph"></i>
+                                </div>
+                                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <!-- ./col -->
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="far fa-chart-bar"></i> Bar Chart</h3>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="barChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="far fa-chart-bar"></i> Donut Chart</h3>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="donutChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="far fa-chart-bar"></i> Line Chart</h3>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="lineChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card card-primary card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="far fa-chart-bar"></i> Pie Chart</h3>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="pieChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                                <!-- /.row -->
+                           
+                        <!-- /.content -->
+                   
+                <!-- /.row -->
+}
+                    <!-- Main row -->
+                    <div>
+
+                        @if (ViewBag.Rol == "Vendedor")
+                        {
+                            <h3 class="mb-4">Datos Asignados para el Vendedor</h3>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header bg-primary text-white">
+                                            <h5 class="card-title">Canal</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text"> Dato Asignado del Canal: @ViewBag.Canal</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header bg-success text-white">
+                                            <h5 class="card-title">Zona</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text"> Dato Asignado de la Zona: @ViewBag.Zona</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header bg-warning text-white">
+                                            <h5 class="card-title">Ruta</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text"> Dato Asignado de la ruta: @ViewBag.Ruta</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                </div>
+
+                
+                
+
+            </div><!-- /.container-fluid -->
+        </section>
+        
+    </div>
+
+    <script>
+        // Verificar si hay un mensaje en ViewBag.SweetAlertMessage
+        @if (!string.IsNullOrEmpty(ViewBag.SweetAlertMessage))
+        {
+            <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Bienvenido',
+                    text: '@ViewBag.SweetAlertMessage',
+                    confirmButtonText: 'Aceptar'
+                });
+            </text>
+        }
+    </script>
+    <!-- jQuery -->
+    <!-- jQuery -->
+    <script src="@Url.Content("~/plugins/jquery/jquery.min.js")"></script>
+
+    <!-- Bootstrap 4 -->
+    <script src="@Url.Content("~/plugins/bootstrap/js/bootstrap.bundle.min.js")"></script>
+
+    <!-- AdminLTE App -->
+    <script src="@Url.Content("~/dist/js/adminlte.min.js")"></script>
+
+    <!-- FLOT CHARTS -->
+    <script src="@Url.Content("~/plugins/flot/jquery.flot.js")"></script>
+
+    <!-- FLOT RESIZE PLUGIN - allows the chart to redraw when the window is resized -->
+    <script src="@Url.Content("~/plugins/flot/plugins/jquery.flot.resize.js")"></script>
+
+    <!-- FLOT PIE PLUGIN - also used to draw donut charts -->
+    <script src="@Url.Content("~/plugins/flot/plugins/jquery.flot.pie.js")"></script>
+
+    <!-- AdminLTE for demo purposes -->
+    <script src="@Url.Content("~/dist/js/demo.js")"></script>
+
+    <!-- OPTIONAL SCRIPTS -->
+    <script src="@Url.Content("~/plugins/chart.js/Chart.min.js")"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function fetchData(endpoint, callback) {
+                fetch(endpoint)
+                    .then(response => response.json())
+                    .then(data => callback(data))
+                    .catch(error => console.error("Error al obtener datos:", error));
+            }
+
+            fetchData("/Principal/GetBarChartData", function (data) {
+                var barCtx = document.getElementById("barChart").getContext("2d");
+                new Chart(barCtx, {
+                    type: "bar",
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: "Ventas Mensuales",
+                            data: data.values,
+                            backgroundColor: "rgba(54, 162, 235, 0.6)"
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+            });
+
+            fetchData("/Principal/GetDonutChartData", function (data) {
+                var donutCtx = document.getElementById("donutChart").getContext("2d");
+                new Chart(donutCtx, {
+                    type: "doughnut",
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            data: data.values,
+                            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"]
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+            });
+
+            fetchData("/Principal/GetLineChartData", function (data) {
+                var lineCtx = document.getElementById("lineChart").getContext("2d");
+                new Chart(lineCtx, {
+                    type: "line",
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: "Crecimiento de Usuarios",
+                            data: data.values,
+                            borderColor: "#42A5F5",
+                            fill: false
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+            });
+
+            fetchData("/Principal/GetPieChartData", function (data) {
+                var pieCtx = document.getElementById("pieChart").getContext("2d");
+                new Chart(pieCtx, {
+                    type: "pie",
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            data: data.values,
+                            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"]
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+            });
+        });
+    </script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="~/js/Principal.js" asp-append-version="true"></script>
+
+   
+
+   
+</body>
+
+</html>

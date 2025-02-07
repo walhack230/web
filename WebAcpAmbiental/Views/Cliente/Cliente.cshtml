@@ -1,0 +1,2372 @@
+﻿@model List<WebAcpAmbiental.Models.MaestroCliente>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Gestión de Clientes";
+    var departamentos = ViewBag.Departamentos as IEnumerable<dynamic>;
+   
+}
+@{
+    var asignaciones = ViewBag.Asignaciones as IEnumerable<dynamic>;
+}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdminLTE 3 | DataTables</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/fontawesome-free/css/all.min.css")">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css")">
+    <link rel="stylesheet" href="@Url.Content("~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css")">
+    <link rel="stylesheet" href="@Url.Content("~/plugins/datatables-buttons/css/buttons.bootstrap4.min.css")">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="@Url.Content("~/dist/css/adminlte.min.css")">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha384-oQmPj7TdbJVGpoENvnEGoytJaFURk+TFYCpV+H4jEFKXck+GNO/dmxr8tM7cK3y3" crossorigin="anonymous"></script>
+
+    <style>
+        .modal-dialog {
+            max-height: 90vh; /* Limita la altura del modal al 90% del viewport */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-content {
+            overflow-y: auto; /* Permite el desplazamiento interno del contenido del modal */
+        }
+
+    </style>
+
+</head>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <!-- Navbar -->
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1>Registro de Cliente</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="@Url.Action("Principal", "Cliente")">Principal</a></li>
+
+
+                                <li class="breadcrumb-item active">Cliente</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                     <div class="col-sm-2">
+                        <!-- Botón para abrir el modal -->
+                        <button type="button" class="btn btn-block btn-success" data-toggle="modal" data-target="#modal-default">
+                            Nuevo Cliente
+                        </button>
+                        <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-primary text-white">
+                                        <h4 class="modal-title">Registro de Direccion</h4>
+                                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <div class="card-body">
+
+
+
+                                            <div class="col-12 col-sm-12">
+                                                <div class="card card-primary card-tabs">
+                                                    <div class="card-header p-0 pt-1">
+                                                        <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                                                            <li class="nav-item">
+                                                                <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">Cliente</a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                                <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill" href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="false">Representante Legal</a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                                <a class="nav-link" id="custom-tabs-one-messages-tab" data-toggle="pill" href="#custom-tabs-one-messages" role="tab" aria-controls="custom-tabs-one-messages" aria-selected="false">Contacto</a>
+                                                            </li>
+
+
+                                                              @if (ViewBag.Rol == "Jefe")
+                                                            {
+
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" id="custom-tabs-one-comercial-tab" data-toggle="pill" href="#custom-tabs-one-comercial" role="tab" aria-controls="custom-tabs-one-comercial" aria-selected="false">Comercial</a>
+                                                                </li>
+                                                            }
+                                                         
+                                                              @if (ViewBag.Rol == "Vendedor")
+                                                            {
+
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" id="custom-tabs-one-comercial-tab" data-toggle="pill" href="#custom-tabs-one-comercial" role="tab" aria-controls="custom-tabs-one-comercial" aria-selected="false">Comercial</a>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="tab-content" id="custom-tabs-one-tabContent">
+                                                            <div class="tab-pane fade active show" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
+                                                                <!-- Título principal -->
+                                                                <h1 class="mb-4 text-primary">Datos del Cliente</h1>
+
+                                                                <!-- Sección de Datos del Cliente -->
+                                                                <div class="row">
+                                                                
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="codigoCliente">Codigo</label>
+                                                                        <input type="text" id="codigoCliente" class="form-control" readonly >
+                                                                    </div>
+                                                                    <!-- Tipo -->
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="tipoCliente">Tipo</label>
+                                                                        <select id="tipoCliente" class="form-control">
+                                                                            <option value="particular">Particular</option>
+                                                                            <option value="juridico">Jurídico</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <!-- Documento -->
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="documentoCliente">Documento</label>
+                                                                        <div class="input-group">
+                                                                            <select id="tipoDocumentoCliente" class="form-control" style="width: 50%; max-width: 90px;">
+                                                                                <option value="dni">DNI</option>
+                                                                                <option value="ruc">RUC</option>
+                                                                                <option value="ce">CE</option>
+                                                                            </select>
+                                                                            <input type="text" id="numeroDocumentoCliente" class="form-control" placeholder="documento">
+                                                                            <button class="btn btn-outline-secondary" id="btnBuscarDocumento">
+                                                                                <i class="fas fa-search"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+
+                                                                <div class="row">
+                                                                    <!-- Nombres -->
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="nombresCliente">Nombres</label>
+                                                                        <input type="text" id="nombresCliente" class="form-control" readonly placeholder="Nombres">
+                                                                    </div>
+                                                                    <!-- Apellido Paterno -->
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="apellidoPaternoCliente">Apellido Paterno</label>
+                                                                        <input type="text" id="apellidoPaternoCliente" class="form-control" readonly placeholder="Apellido paterno">
+                                                                    </div>
+                                                                    <!-- Apellido Materno -->
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="apellidoMaternoCliente">Apellido Materno</label>
+                                                                        <input type="text" id="apellidoMaternoCliente" class="form-control" readonly placeholder="Apellido materno">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <!-- Nombres -->
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="telefonoCliente">Telefono</label>
+                                                                        <input type="text" id="telefonoCliente" class="form-control"  placeholder="Telefono">
+                                                                    </div>
+                                                                    <!-- Apellido Paterno -->
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="celularCliente">Celular</label>
+                                                                        <input type="text" id="celularCliente" class="form-control"  placeholder="Celular">
+                                                                    </div>
+                                                                    <!-- Apellido Materno -->
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="emailCliente">Email</label>
+                                                                        <input type="text" id="emailCliente" class="form-control"  placeholder="Email">
+                                                                    </div>
+                                                                </div>
+
+
+
+                                                                <div class="row">
+                                                                    <!-- Razón Social -->
+                                                                    <div class="col-md-6 mb-3">
+                                                                        <label for="razonSocialCliente">Razón Social</label>
+                                                                        <input type="text" id="razonSocialCliente" class="form-control" placeholder="Razón social">
+                                                                    </div>
+                                                                    <!-- Actividad Principal -->
+                                                                    <div class="col-md-6 mb-3">
+                                                                        <label for="actividadPrincipalCliente">Actividad Principal</label>
+                                                                        <input type="text" id="actividadPrincipalCliente" class="form-control" placeholder="Actividad principal">
+                                                                    </div>
+                                                                </div>
+
+
+
+                                                                <!-- Título de Dirección -->
+                                                                <h2 class="mt-5 mb-4 text-primary">Dirección</h2>
+
+                                                                <!-- Sección de Dirección -->
+                                                                <div class="row">
+                                                                    <!-- Departamento -->
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="dptoCliente">Departamento</label>
+                                                                        <select id="dptoCliente" class="form-control">
+                                                                            <option value="">Seleccione un departamento</option>
+                                                                            @foreach (var dpto in departamentos)
+                                                                            {
+                                                                                <option value="@dpto.IdDepartamento">@dpto.NombreDepartamento</option>
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                    <!-- Provincia -->
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="provinciaCliente">Provincia</label>
+                                                                        <select id="provinciaCliente" class="form-control" disabled>
+                                                                            <option value="">Seleccione una provincia</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <!-- Distrito -->
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="distritoCliente">Distrito</label>
+                                                                        <select id="distritoCliente" class="form-control" disabled>
+                                                                            <option value="">Seleccione un distrito</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row">
+                                                                    <!-- Urbanización -->
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="urbanizacionCliente">Urbanización</label>
+                                                                        <input type="text" id="urbanizacionCliente" class="form-control" placeholder="Urbanización">
+                                                                    </div>
+                                                                    <!-- Código Postal -->
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="codigoPostal">Código Postal</label>
+                                                                        <input type="text" id="codigoPostal" class="form-control" placeholder="Código postal">
+                                                                    </div>
+                                                                    <!-- Número -->
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="numeroDireccion">Número</label>
+                                                                        <input type="text" id="numeroDireccion" class="form-control" placeholder="Número de puerta">
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row">
+                                                                    <!-- Nombre -->
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="nombreDireccion">Calle</label>
+                                                                        <div class="input-group">
+                                                                            <input type="text" id="nombreDireccion" class="form-control" placeholder="Nombre de la calle">
+                                                                            <div class="input-group-append">
+                                                                                <button class="btn btn-outline-primary" type="button" data-toggle="modal" data-target="#mapModal">
+                                                                                    <i class="fas fa-map-marker-alt"></i>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!-- Modal -->
+                                                                        <div class="modal fade" id="mapModal" tabindex="-1" role="dialog" aria-labelledby="mapModalLabel" aria-hidden="true">
+                                                                            <div class="modal-dialog modal-lg" role="document">
+                                                                                <div class="modal-content">
+                                                                                    <div class="modal-header">
+                                                                                        <h5 class="modal-title" id="mapModalLabel">Seleccionar Ubicación</h5>
+
+                                                                                    </div>
+                                                                                    <div class="modal-body">
+                                                                                        <input id="searchBox" class="form-control mb-3" type="text" placeholder="Buscar dirección o lugar" />
+                                                                                        <div id="map" style="height: 400px; width: 100%;"></div>
+                                                                                    </div>
+                                                                                    <div class="modal-footer">
+
+                                                                                        <button type="button" class="btn btn-primary" id="saveLocation">Guardar Ubicación</button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        
+                                                                    </div>
+                                                                    <!-- Vía -->
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="viaDireccion">Vía</label>
+                                                                        <input type="text" id="viaDireccion" class="form-control" placeholder="Tipo de vía (Ej. Avenida, Jirón, Calle)">
+                                                                    </div>
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <label for="ventanaAtencion">Ventanas de Atencion</label>
+                                                                        <input type="text" id="ventanaAtencion" class="form-control" placeholder="1 2 3">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="custom-tabs-one-profile-tab">
+
+                                                                <div class="container mb-4">
+                                                                    <h1 class="mb-4 text-primary">Representante Legal</h1>
+
+                                                                    <!-- Fila 1: Documento y Botón de Búsqueda -->
+                                                                    <div class="row mb-3">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="tipodeDocumentoRepresentante">Documento</label>
+                                                                                <div class="input-group">
+                                                                                    <select class="form-control" id="tipodeDocumentoRepresentante">
+                                                                                        <option value="dni">DNI</option>
+                                                                                        <option value="ce">CE</option>
+                                                                                         <option value="ci">CI</option>
+                                                                                       
+                                                                                    </select>
+                                                                                    <input type="text" class="form-control" placeholder="Ingrese el número" id="documentoDniRepresentante">
+                                                                                    <div class="input-group-append">
+                                                                                        <button class="btn btn-secondary" type="button" id="buscarDNIRepresentante">
+                                                                                            <i class="fas fa-search"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <!-- Fila 2: Apellidos y Nombres -->
+                                                                    <div class="row mb-3">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="ApellidoPaternoRepresentante">Apellido Paterno</label>
+                                                                                <input type="text" class="form-control" id="ApellidoPaternoRepresentante" placeholder="Apellidos" readonly>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="ApellidoMaternoRepresentante">Apellido Materno</label>
+                                                                                <input type="text" class="form-control" id="ApellidoMaternoRepresentante" placeholder="Apellidos" readonly>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="nombresRepresentante">Nombres</label>
+                                                                                <input type="text" class="form-control" id="nombresRepresentante" placeholder="Nombres" readonly>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+
+                                                                    <!-- Fila 3: Cargo de la Empresa y Teléfonos -->
+                                                                    <div class="row mb-3">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="cargoRepresentante">Cargo en la Empresa</label>
+                                                                                <input type="text" class="form-control" id="cargoRepresentante" placeholder="Cargo">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <div class="form-group">
+                                                                                <label for="telefonoRepresentante">Teléfono</label>
+                                                                                <input type="text" class="form-control" id="telefonoRepresentante" placeholder="Teléfono">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <div class="form-group">
+                                                                                <label for="celularRepresentante">Celular</label>
+                                                                                <input type="text" class="form-control" id="celularRepresentante" placeholder="Celular">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <!-- Fila 4: Emails -->
+                                                                    <div class="row mb-3">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="personalemailRepresentante">Email Personal</label>
+                                                                                <input type="email" class="form-control" id="personalemailRepresentante" placeholder="Email Personal">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="empresarialemailRepresentante">Email Empresarial</label>
+                                                                                <input type="email" class="form-control" id="empresarialemailRepresentante" placeholder="Email Empresarial">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+
+
+                                                                </div>
+
+
+                                                            </div>
+
+                                                            <div class="tab-pane fade" id="custom-tabs-one-messages" role="tabpanel" aria-labelledby="custom-tabs-one-messages-tab">
+                                                                <div class="container mb-4">
+                                                                    <h1 class="mb-4 text-primary">Datos del Contacto</h1>
+
+                                                                    <!-- Fila 1: Documento y Botón de Búsqueda -->
+                                                                    <div class="row mb-3">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="tipoDocumentoContacto">Documento</label>
+                                                                                <div class="input-group">
+                                                                                    <select class="form-control" id="tipoDocumentoContacto">
+                                                                                        <option value="dni">DNI</option>
+                                                                                        <option value="ce">CE</option>
+                                                                                        <option value="ci">CI</option>
+                                                                                    </select>
+                                                                                    <input type="text" class="form-control" placeholder="Ingrese el número" id="documentNumberContacto">
+                                                                                    <div class="input-group-append">
+                                                                                        <button class="btn btn-secondary" type="button" id="buscarDNIContacto">
+                                                                                            <i class="fas fa-search"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <!-- Fila 2: Apellidos y Nombres -->
+                                                                    <div class="row mb-3">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="apellidoPaternoContacto">Apellido Paterno</label>
+                                                                                <input type="text" class="form-control" id="apellidoPaternoContacto" placeholder="Apellidos" readonly>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="apellidoMaternoContacto">Apellido Materno</label>
+                                                                                <input type="text" class="form-control" id="apellidoMaternoContacto" placeholder="Apellidos" readonly>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="nombreContacto">Nombres</label>
+                                                                                <input type="text" class="form-control" id="nombreContacto" placeholder="Nombres" readonly>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                              <label for="tipocontacto">Tipo de Contacto</label>
+                                                                        <select id="tipocontacto" class="form-control" >
+                                                                            <option value="El que pide">El que pide</option>
+                                                                            <option value="El que usa">El que usa</option>
+                                                                            <option value="El que paga">El que paga</option>
+                                                                        </select>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                    <!-- Fila 3: Cargo de la Empresa y Teléfonos -->
+                                                                    <div class="row mb-3">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="cargoContacto">Cargo en la Empresa</label>
+                                                                                <input type="text" class="form-control" id="cargoContacto" placeholder="Cargo">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <div class="form-group">
+                                                                                <label for="telefonoContacto">Teléfono</label>
+                                                                                <input type="text" class="form-control" id="telefonoContacto" placeholder="Teléfono">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <div class="form-group">
+                                                                                <label for="celularContacto">Celular</label>
+                                                                                <input type="text" class="form-control" id="celularContacto" placeholder="Celular">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <!-- Fila 4: Emails -->
+                                                                    <div class="row mb-3">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="personalemailContacto">Email Personal</label>
+                                                                                <input type="email" class="form-control" id="personalemailContacto" placeholder="Email Personal">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="empresarialemailContacto">Email Empresarial</label>
+                                                                                <input type="email" class="form-control" id="empresarialemailContacto" placeholder="Email Empresarial">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+
+
+                                                                </div>
+
+                                                            </div>
+                                                            
+
+                                                            @if (ViewBag.Rol == "Jefe")
+                                                            {
+                                                                <div class="tab-pane fade" id="custom-tabs-one-comercial" role="tabpanel" aria-labelledby="custom-tabs-one-comercial-tab">
+                                                                    <h1 class="mb-4">Datos Comerciales</h1>
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="vendedores">Seleccionar Vendedor</label>
+                                                                                <select id="vendedores" class="form-control">
+                                                                                    <option value="">Seleccione un vendedor</option>
+                                                                                    
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="canalventa">Canal de Venta</label>
+                                                                                <input type="text" class="form-control" readonly id="canalventa">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="zona">Zona</label>
+                                                                                <input type="text" class="form-control" readonly id="zona">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="ruta">Ruta</label>
+                                                                                <input type="text" class="form-control" readonly id="ruta">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!-- Campo oculto para capturar id_asignacion -->
+                                                                    <input type="hidden" id="idasignacion" name="idasignacion" />
+
+                                                                    <!-- Otras partes del formulario o contenido -->
+                                                                   
+
+                                                                </div>
+                                                            }
+
+
+
+
+
+
+
+                                                             @if (ViewBag.Rol == "Vendedor")
+                                                            {
+
+                                                                <div class="tab-pane fade" id="custom-tabs-one-comercial" role="tabpanel" aria-labelledby="custom-tabs-one-comercial-tab">
+
+
+                                                                    <h1 class="mb-4">Datos Comerciales</h1>
+
+                                                                    <div class="row">
+                                                                        <!-- Canal de Venta -->
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="canalventa">Canal de Venta</label>
+                                                                                <input type="text" class="form-control" readonly value="@ViewBag.Canal" id="canalventa">
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <!-- Zona -->
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="zona">Zona</label>
+                                                                                <input type="text" class="form-control" readonly value="@ViewBag.Zona" id="zona">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="row">
+                                                                        <!-- Ruta -->
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="ruta">Ruta</label>
+                                                                                <input type="text" class="form-control" readonly value="@ViewBag.Ruta" id="ruta">
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <!-- Vendedor Asignado -->
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="vendedor">Vendedor Asignado</label>
+                                                                                <input type="text" class="form-control" readonly value="@ViewBag.Usuario" id="vendedor">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+
+                                                                </div>
+                                                                <!-- Campo hidden para id_asignacion -->
+                                                                <input type="hidden" id="idasignacion" value="@ViewBag.IdAsignacion">
+                                                                <script>
+                                                                    console.log("ID Asignación:", document.getElementById("idasignacion").value);
+                                                                </script>
+
+                                                               
+
+                                                            }
+
+
+
+                                                    </div>
+                                                </div>
+                                                <!-- /.card -->
+                                            </div>
+
+                                          
+
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                        <button type="button" class="btn btn-primary" id="saveChangesBtn">Guardar</button>
+                                    </div>
+
+                                  
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+                      </div>
+                  
+                    </div>
+
+                   
+
+                
+            </section>
+
+            <section class="content">
+                <div class="container-fluid">
+
+                    <div class="row">
+                        <div class="col-12">
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h1 class="card-title">Listado de Rutas</h1>
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body">
+                                    <table id="example1" class="table table-bordered table-striped">
+                                        <thead class="text-center">
+                                            <tr class="text-center">
+                                                <th>Codigo</th>
+                                                <th>Tipo</th>
+                                                <th>Documento</th>
+                                                <th>Nro. Documento</th>
+                                                <th>Cliente</th>
+                                                <th>Calle</th>
+                                                <th>Contacto</th>
+                                                <th>Celular del Contacto</th>
+
+                                               
+                                                <th>Distrito</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-center">
+                                               @foreach (var cliente in Model)
+                                            {
+                                            <tr class="text-center">
+                                                <td>@cliente.IdCliente</td>
+                                                <td>@cliente.TipoCliente</td>
+                                                <td>@cliente.DocumentoCliente</td>
+                                                <td>@cliente.NrodocumentoCliente</td>
+                                                <td>@cliente.NombreCompleto</td>
+                                                <td>@cliente.CalledireccionCliente</td>
+                                                <td>@cliente.ApellidopContacto @cliente.ApellidomContacto @cliente.NombreContacto</td>
+                                                 <td>@cliente.CelularContacto</td>
+                                               
+                                                <td>@cliente.IdDistritoNavigation?.NombreDistrito</td>
+
+                                                
+                                                <td class="text-center">
+                                                    <button class="btn btn-link" data-id="@cliente.IdCliente" onclick="editarCliente(this)">
+                                                        <i class="fas fa-edit icon-circle text-primary"></i>
+                                                    </button>
+
+                                                        <button class="btn btn-link btn-eliminar-cliente" data-id="@cliente.IdCliente">
+                                                            <i class="fas fa-trash-alt icon-circle text-danger"></i>
+                                                        </button>
+
+
+                                                        <button class="btn btn-link" data-id="@cliente.IdCliente" onclick="abrirModalCliente(this)">
+                                                        <i class="fas fa-info-circle icon-circle text-success"></i>
+                                                    </button>
+                                                </td>
+
+
+                                            </tr>
+
+                                            }
+
+                                        </tbody>
+
+                                    </table>
+                                </div>
+
+                                <div class="modal fade" id="modalEditarCliente" tabindex="-1" aria-labelledby="modalEditarClienteLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content shadow-lg border-0">
+                                            <div class="modal-header bg-primary text-white">
+                                                <h5 class="modal-title" id="modalEditarClienteLabel">
+                                                    <i class="fas fa-edit me-2"></i> Editar Cliente
+                                                </h5>
+                                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <div class="card-body">
+
+                                                       <div class="col-12 col-sm-12">
+
+                                                            <div class="card card-primary card-tabs">
+
+                                                            <div class="card-header p-0 pt-1">
+                                                                <ul class="nav nav-tabs" id="custom-tabs-edit-tab" role="tablist">
+                                                                    <li class="nav-item">
+                                                                        <a class="nav-link active" id="custom-tabs-edit-client-tab" data-toggle="pill" href="#custom-tabs-edit-client" role="tab" aria-controls="custom-tabs-edit-client" aria-selected="true">Cliente</a>
+                                                                    </li>
+                                                                    <li class="nav-item">
+                                                                        <a class="nav-link" id="custom-tabs-edit-representative-tab" data-toggle="pill" href="#custom-tabs-edit-representative" role="tab" aria-controls="custom-tabs-edit-representative" aria-selected="false">Representante Legal</a>
+                                                                    </li>
+                                                                    <li class="nav-item">
+                                                                        <a class="nav-link" id="custom-tabs-edit-contact-tab" data-toggle="pill" href="#custom-tabs-edit-contact" role="tab" aria-controls="custom-tabs-edit-contact" aria-selected="false">Contacto</a>
+                                                                    </li>
+
+                                                                    @if (ViewBag.Rol == "Jefe")
+                                                                    {
+                                                                        <li class="nav-item">
+                                                                            <a class="nav-link" id="custom-tabs-edit-comercial-tab" data-toggle="pill" href="#custom-tabs-edit-comercial" role="tab" aria-controls="custom-tabs-edit-comercial" aria-selected="false">Comercial</a>
+                                                                        </li>
+                                                                    }
+
+                                                                    @if (ViewBag.Rol == "Vendedor")
+                                                                    {
+                                                                        <li class="nav-item">
+                                                                            <a class="nav-link" id="custom-tabs-edit-comercial-tab" data-toggle="pill" href="#custom-tabs-edit-comercial" role="tab" aria-controls="custom-tabs-edit-comercial" aria-selected="false">Comercial</a>
+                                                                        </li>
+                                                                    }
+                                                                </ul>
+                                                            </div>
+
+
+                                                            </div>
+                                                                     <div class="card-body">
+                                                                        <div class="tab-content" id="custom-tabs-edit-content">
+
+                                                                            <div class="tab-pane fade show active" id="custom-tabs-edit-client" role="tabpanel" aria-labelledby="custom-tabs-edit-client-tab">
+
+
+                                                                
+                                                                        <!-- Título principal -->
+                                                                        <h1 class="mb-4 text-primary">Datos del Cliente</h1>
+
+                                                                        <!-- Sección de Datos del Cliente -->
+                                                                        <div class="row">
+                                                                            <!-- Código -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                                <label for="codigoClienteEditar">Código</label>
+                                                                            <input type="text" id="codigoClienteEditar" class="form-control" readonly>
+                                                                            </div>
+                                                                            <!-- Tipo -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                                <label for="tipoClienteEditar">Tipo</label>
+                                                                            <select id="tipoClienteEditar" class="form-control" readonly>
+                                                                                    <option value="particular">Particular</option>
+                                                                                    <option value="juridico">Jurídico</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <!-- Documento -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                                <label for="documentoClienteEditar">Documento</label>
+                                                                                <div class="input-group">
+                                                                                    <select id="tipoDocumentoClienteEditar" class="form-control"  readonly style="width: 50%; max-width: 90px;">
+                                                                                        <option value="dni">DNI</option>
+                                                                                        <option value="ruc">RUC</option>
+                                                                                        <option value="ce">CE</option>
+                                                                                    </select>
+                                                                                    <input type="text" id="numeroDocumentoClienteEditar"  readonly class="form-control" placeholder="documento">
+                                                                                    <button class="btn btn-outline-secondary" id="btnBuscarDocumentoEditar">
+                                                                                        <i class="fas fa-search"></i>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </div>
+
+                                                                        <div class="row">
+                                                                            <!-- Nombres -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                            <label for="nombresClienteEditar">Nombres</label>
+                                                                            <input type="text" id="nombresClienteEditar" class="form-control" readonly placeholder="Nombres">
+                                                                            </div>
+                                                                            <!-- Apellido Paterno -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                                <label for="apellidoPaternoClienteEditar">Apellido Paterno</label>
+                                                                                <input type="text" id="apellidoPaternoClienteEditar" class="form-control" readonly placeholder="Apellido paterno">
+                                                                            </div>
+                                                                            <!-- Apellido Materno -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                                <label for="apellidoMaternoClienteEditar">Apellido Materno</label>
+                                                                                <input type="text" id="apellidoMaternoClienteEditar" class="form-control" readonly placeholder="Apellido materno">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <!-- Nombres -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                                <label for="telefonoClienteEditar">Telefono</label>
+                                                                                <input type="text" id="telefonoClienteEditar" class="form-control" placeholder="Telefono">
+                                                                            </div>
+                                                                            <!-- Apellido Paterno -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                                <label for="celularClienteEditar">Celular</label>
+                                                                                <input type="text" id="celularClienteEditar" class="form-control" placeholder="Celular">
+                                                                            </div>
+                                                                            <!-- Apellido Materno -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                                <label for="emailClienteEditar">Email</label>
+                                                                                <input type="text" id="emailClienteEditar" class="form-control" placeholder="Email">
+                                                                            </div>
+                                                                        </div>
+
+
+
+                                                                        <div class="row">
+                                                                            <!-- Razón Social -->
+                                                                            <div class="col-md-6 mb-3">
+                                                                                <label for="razonSocialClienteEditar">Razón Social</label>
+                                                                                <input type="text" id="razonSocialClienteEditar" class="form-control" placeholder="Razón social">
+                                                                            </div>
+                                                                            <!-- Actividad Principal -->
+                                                                            <div class="col-md-6 mb-3">
+                                                                                <label for="actividadPrincipalClienteEditar">Actividad Principal</label>
+                                                                                <input type="text" id="actividadPrincipalClienteEditar" class="form-control" placeholder="Actividad principal">
+                                                                            </div>
+                                                                        </div>
+
+
+
+                                                                        <!-- Título de Dirección -->
+                                                                        <h2 class="mt-5 mb-4 text-primary">Dirección</h2>
+
+                                                                        <!-- Sección de Dirección -->
+                                                                        <div class="row">
+                                                                            <!-- Departamento -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                                <label for="dptoClienteEditar">Departamento</label>
+                                                                                <select id="dptoClienteEditar" class="form-control">
+                                                                                    <option value="">Seleccione un departamento</option>
+                                                                                    @foreach (var dpto in departamentos)
+                                                                                    {
+                                                                                        <option value="@dpto.IdDepartamento">@dpto.NombreDepartamento</option>
+                                                                                    }
+                                                                                </select>
+                                                                            </div>
+                                                                            <!-- Provincia -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                                <label for="provinciaClienteEditar">Provincia</label>
+                                                                                <select id="provinciaClienteEditar" class="form-control" disabled>
+                                                                                    <option value="">Seleccione una provincia</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <!-- Distrito -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                                <label for="distritoClienteEditar">Distrito</label>
+                                                                                <select id="distritoClienteEditar" class="form-control" disabled>
+                                                                                    <option value="">Seleccione un distrito</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="row">
+                                                                            <!-- Urbanización -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                            <label for="urbanizacionClienteEditar">Urbanización</label>
+                                                                                <input type="text" id="urbanizacionClienteEditar" class="form-control" placeholder="Urbanización">
+                                                                            </div>
+                                                                            <!-- Código Postal -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                                <label for="codigoPostalEditar">Código Postal</label>
+                                                                                <input type="text" id="codigoPostalEditar" class="form-control" placeholder="Código postal">
+                                                                            </div>
+                                                                            <!-- Número -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                                <label for="numeroDireccionEditar">Número</label>
+                                                                                <input type="text" id="numeroDireccionEditar" class="form-control" placeholder="Número de puerta">
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="row">
+                                                                            <!-- Nombre -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                                <label for="nombreDireccionEditar">Calle</label>
+                                                                                <div class="input-group">
+                                                                                    <input type="text" id="nombreDireccionEditar"  readonly class="form-control" placeholder="Nombre de la calle">
+                                                                                    <div class="input-group-append">
+                                                                                        <button class="btn btn-outline-primary" type="button" data-toggle="modal" data-target="#mapModal">
+                                                                                            <i class="fas fa-map-marker-alt"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!-- Modal -->
+                                                                                <div class="modal fade" id="mapModal" tabindex="-1" role="dialog" aria-labelledby="mapModalLabel" aria-hidden="true">
+                                                                                    <div class="modal-dialog modal-lg" role="document">
+                                                                                        <div class="modal-content">
+                                                                                            <div class="modal-header">
+                                                                                                <h5 class="modal-title" id="mapModalLabel">Seleccionar Ubicación</h5>
+
+                                                                                            </div>
+                                                                                            <div class="modal-body">
+                                                                                                <input id="searchBox" class="form-control mb-3" type="text" placeholder="Buscar dirección o lugar" />
+                                                                                                <div id="map" style="height: 400px; width: 100%;"></div>
+                                                                                            </div>
+                                                                                            <div class="modal-footer">
+
+                                                                                                <button type="button" class="btn btn-primary" id="saveLocation">Guardar Ubicación</button>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            </div>
+                                                                            <!-- Vía -->
+                                                                            <div class="col-md-4 mb-3">
+                                                                                <label for="viaDireccionEditar">Vía</label>
+                                                                                <input type="text" id="viaDireccionEditar" class="form-control" placeholder="Tipo de vía (Ej. Avenida, Jirón, Calle)">
+                                                                            </div>
+                                                                            <div class="col-md-4 mb-3">
+                                                                                <label for="ventanaAtencionEditar">Ventanas de Atencion</label>
+                                                                                <input type="text" id="ventanaAtencionEditar" class="form-control" placeholder="1 2 3">
+                                                                            </div>
+                                                                        </div>
+                                                                    
+                                                                            </div>
+
+                                                                            <div class="tab-pane fade" id="custom-tabs-edit-representative" role="tabpanel" aria-labelledby="custom-tabs-edit-representative-tab">
+
+
+                                                               
+
+                                                                        <div class="container mb-4">
+                                                                            <h1 class="mb-4 text-primary">Representante Legal</h1>
+
+                                                                            <!-- Fila 1: Documento y Botón de Búsqueda -->
+                                                                            <div class="row mb-3">
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="tipodeDocumentoRepresentanteEditar">Documento</label>
+                                                                                        <div class="input-group">
+                                                                                        <select class="form-control" readonly id="tipodeDocumentoRepresentanteEditar">
+                                                                                                <option value="dni">DNI</option>
+                                                                                                <option value="ce">CE</option>
+                                                                                                <option value="ci">CI</option>
+
+                                                                                            </select>
+                                                                                        <input type="text" readonly class="form-control" placeholder="Ingrese el número" id="documentoDniRepresentanteEditar">
+                                                                                            <div class="input-group-append">
+                                                                                                <button class="btn btn-secondary" type="button" id="buscarDNIRepresentanteEditar">
+                                                                                                    <i class="fas fa-search"></i>
+                                                                                                </button>
+                                                                                         
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <!-- Fila 2: Apellidos y Nombres -->
+                                                                            <div class="row mb-3">
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="ApellidoPaternoRepresentanteEditar">Apellido Paterno</label>
+                                                                                        <input type="text" class="form-control" id="ApellidoPaternoRepresentanteEditar" placeholder="Apellidos" readonly>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="ApellidoMaternoRepresentanteEditar">Apellido Materno</label>
+                                                                                        <input type="text" class="form-control" id="ApellidoMaternoRepresentanteEditar" placeholder="Apellidos" readonly>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="nombresRepresentanteEditar">Nombres</label>
+                                                                                        <input type="text" class="form-control" id="nombresRepresentanteEditar" placeholder="Nombres" readonly>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+
+                                                                            <!-- Fila 3: Cargo de la Empresa y Teléfonos -->
+                                                                            <div class="row mb-3">
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="cargoRepresentanteEditar">Cargo en la Empresa</label>
+                                                                                        <input type="text" class="form-control" id="cargoRepresentanteEditar" placeholder="Cargo">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-3">
+                                                                                    <div class="form-group">
+                                                                                        <label for="telefonoRepresentanteEditar">Teléfono</label>
+                                                                                        <input type="text" class="form-control" id="telefonoRepresentanteEditar" placeholder="Teléfono">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-3">
+                                                                                    <div class="form-group">
+                                                                                        <label for="celularRepresentanteEditar">Celular</label>
+                                                                                        <input type="text" class="form-control" id="celularRepresentanteEditar" placeholder="Celular">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <!-- Fila 4: Emails -->
+                                                                            <div class="row mb-3">
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="personalemailRepresentanteEditar">Email Personal</label>
+                                                                                        <input type="email" class="form-control" id="personalemailRepresentanteEditar" placeholder="Email Personal">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="empresarialemailRepresentanteEditar">Email Empresarial</label>
+                                                                                        <input type="email" class="form-control" id="empresarialemailRepresentanteEditar" placeholder="Email Empresarial">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+
+
+                                                                        </div>
+
+
+
+
+                                                                            </div>
+
+
+                                                                            <div class="tab-pane fade" id="custom-tabs-edit-contact" role="tabpanel" aria-labelledby="custom-tabs-edit-contact-tab">
+
+                                                                 
+                                                                        <div class="container mb-4">
+                                                                            <h1 class="mb-4 text-primary">Datos del Contacto</h1>
+
+                                                                            <!-- Fila 1: Documento y Botón de Búsqueda -->
+                                                                            <div class="row mb-3">
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="tipoDocumentoContactoEditar">Documento</label>
+                                                                                        <div class="input-group">
+                                                                                            <select class="form-control"  readonly id="tipoDocumentoContactoEditar">
+                                                                                                <option value="dni">DNI</option>
+                                                                                                <option value="ce">CE</option>
+                                                                                                <option value="ci">CI</option>
+                                                                                            </select>
+                                                                                        <input type="text" class="form-control" readonly placeholder="Ingrese el número" id="documentNumberContactoEditar">
+                                                                                            <div class="input-group-append">
+                                                                                                <button class="btn btn-secondary" type="button" id="buscarDNIContactoEditar">
+                                                                                                    <i class="fas fa-search"></i>
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <!-- Fila 2: Apellidos y Nombres -->
+                                                                            <div class="row mb-3">
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="apellidoPaternoContactoEditar">Apellido Paterno</label>
+                                                                                        <input type="text" class="form-control" id="apellidoPaternoContactoEditar" placeholder="Apellidos" readonly>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="apellidoMaternoContactoEditar">Apellido Materno</label>
+                                                                                        <input type="text" class="form-control" id="apellidoMaternoContactoEditar" placeholder="Apellidos" readonly>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="nombreContactoEditar">Nombres</label>
+                                                                                        <input type="text" class="form-control" id="nombreContactoEditar" placeholder="Nombres" readonly>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="tipocontactoEditar">Tipo de Contacto</label>
+                                                                                        <select id="tipocontactoEditar" class="form-control">
+                                                                                            <option value="El que pide">El que pide</option>
+                                                                                            <option value="El que usa">El que usa</option>
+                                                                                            <option value="El que paga">El que paga</option>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            </div>
+
+                                                                            <!-- Fila 3: Cargo de la Empresa y Teléfonos -->
+                                                                            <div class="row mb-3">
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="cargoContactoEditar">Cargo en la Empresa</label>
+                                                                                        <input type="text" class="form-control" id="cargoContactoEditar" placeholder="Cargo">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-3">
+                                                                                    <div class="form-group">
+                                                                                        <label for="telefonoContactoEditar">Teléfono</label>
+                                                                                        <input type="text" class="form-control" id="telefonoContactoEditar" placeholder="Teléfono">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-3">
+                                                                                    <div class="form-group">
+                                                                                        <label for="celularContactoEditar">Celular</label>
+                                                                                        <input type="text" class="form-control" id="celularContactoEditar" placeholder="Celular">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <!-- Fila 4: Emails -->
+                                                                            <div class="row mb-3">
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="personalemailContactoEditar">Email Personal</label>
+                                                                                        <input type="email" class="form-control" id="personalemailContactoEditar" placeholder="Email Personal">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <div class="form-group">
+                                                                                        <label for="empresarialemailContactoEditar">Email Empresarial</label>
+                                                                                        <input type="email" class="form-control" id="empresarialemailContactoEditar" placeholder="Email Empresarial">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+
+
+                                                                        </div>
+
+                                                               
+
+                                                                            </div>
+
+
+
+                                                                              @if (ViewBag.Rol == "Jefe")
+                                                            {
+                                                                            <div class="tab-pane fade" id="custom-tabs-edit-comercial" role="tabpanel" aria-labelledby="custom-tabs-edit-comercial-tab">
+
+                                                                        <h1 class="mb-4">Datos Comerciales</h1>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label for="vendedoresEditar">Seleccionar Vendedor</label>
+
+                                                                                   
+                                                                                    <input type="text" class="form-control" readonly id="vendedoresEditar">
+                                                                                  @*  <select id="vendedoresEditar" class="form-control">
+                                                                                        <option value="">Seleccione un vendedor</option>
+                                                                                    </select>*@
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label for="canalventaEditar">Canal de Venta</label>
+                                                                                    <input type="text" class="form-control" readonly id="canalventaEditar">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label for="zonaEditar">Zona</label>
+                                                                                    <input type="text" class="form-control" readonly id="zonaEditar">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label for="rutaEditar">Ruta</label>
+                                                                                    <input type="text" class="form-control" readonly id="rutaEditar">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!-- Campo oculto para capturar id_asignacion -->
+                                                                        <input type="hidden" id="idasignacionEditar" name="idasignacion" />
+
+                                                                        <!-- Otras partes del formulario o contenido -->
+
+
+
+                                                                            </div>
+                                                            }
+
+
+                                                             @if (ViewBag.Rol == "Vendedor")
+                                                            {
+                                                                            <div class="tab-pane fade" id="custom-tabs-edit-comercial" role="tabpanel" aria-labelledby="custom-tabs-edit-comercial-tab">
+                                                                        <h1 class="mb-4">Datos Comerciales</h1>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label for="canalventaEditar">Canal de Venta</label>
+                                                                                    <input type="text" class="form-control" readonly l" id="canalventaEditar">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="zonaEditar">Zona</label>
+                                                                                <input type="text" class="form-control" readonly  id="zonaEditar">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label for="rutaEditar">Ruta</label>
+                                                                                    <input type="text" class="form-control" readonly id="rutaEditar">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label for="vendedor">Vendedor Asignado</label>
+                                                                                    <input type="text" class="form-control" readonly  id="vendedoresEditar">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <!-- Campo hidden para id_asignacion -->
+                                                                    <input type="hidden" id="idasignacionEditar" value="@ViewBag.IdAsignacion">
+                                                                    <script>
+                                                                        console.log("ID Asignación:", document.getElementById("idasignacion").value);
+                                                                    </script>
+                                                                            
+                                                            }
+                                                                        </div>
+
+                                                                    </div>
+
+
+
+                                                       </div>
+
+
+
+
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                <button type="button" class="btn btn-primary" id="saveChangesBtnEditar">Guardar Cambios</button>
+
+                                            </div>
+
+
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+
+
+
+                                <div class="modal fade" id="modalClienteDetalle" tabindex="-1" aria-labelledby="modalClienteLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content shadow-lg border-0">
+                                            <div class="modal-header bg-primary text-white">
+                                                <h5 class="modal-title" id="modalClienteLabel">
+                                                    <i class="fas fa-user-circle me-2"></i> Detalles del Cliente
+                                                </h5>
+                                              
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <div class="card-body">
+
+
+
+                                                    <div class="col-12 col-sm-12">
+                                                        <div class="card card-primary card-tabs">
+                                                            <div class="card-header p-0 pt-1">
+                                                                <ul class="nav nav-tabs" id="view-tabs-one-tab" role="tablist">
+                                                                    <li class="nav-item">
+                                                                        <a class="nav-link active" id="view-tabs-one-client-tab" data-toggle="pill" href="#view-tabs-one-client" role="tab" aria-controls="view-tabs-one-client" aria-selected="true">Cliente</a>
+                                                                    </li>
+                                                                    <li class="nav-item">
+                                                                        <a class="nav-link" id="view-tabs-one-representative-tab" data-toggle="pill" href="#view-tabs-one-representative" role="tab" aria-controls="view-tabs-one-representative" aria-selected="false">Representante Legal</a>
+                                                                    </li>
+                                                                    <li class="nav-item">
+                                                                        <a class="nav-link" id="view-tabs-one-contact-tab" data-toggle="pill" href="#view-tabs-one-contact" role="tab" aria-controls="view-tabs-one-contact" aria-selected="false">Contacto</a>
+                                                                    </li>
+                                                                    <li class="nav-item">
+                                                                        <a class="nav-link" id="view-tabs-one-commercial-tab" data-toggle="pill" href="#view-tabs-one-commercial" role="tab" aria-controls="view-tabs-one-commercial" aria-selected="false">Comercial</a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <div class="tab-content" id="view-tabs-one-tabContent">
+                                                                    <div class="tab-pane fade show active" id="view-tabs-one-client" role="tabpanel" aria-labelledby="view-tabs-one-client-tab">
+                                                                        <!-- Título principal -->
+                                                                        <!-- Título principal -->
+                                                                        <h1 class="mb-4 text-primary text-center">Datos del Cliente</h1>
+
+                                                                        <!-- Sección: Datos del Cliente -->
+                                                                        <div class="card mb-4 shadow-sm">
+                                                                            <div class="card-header bg-light">
+                                                                                <h5 class="mb-0 text-secondary">Información General</h5>
+                                                                            </div>
+                                                                            <div class="card-body">
+                                                                                <div class="row">
+                                                                                    <!-- Primera columna -->
+                                                                                    <div class="col-md-6">
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Código</h6>
+                                                                                            <p id="modalCodigo" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Tipo</h6>
+                                                                                            <p id="modalTipoCliente" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Tipo de Documento</h6>
+                                                                                            <p id="modalDocumento" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Número de Documento</h6>
+                                                                                            <p id="modalNroDocumento" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <!-- Segunda columna -->
+                                                                                    <div class="col-md-6">
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Nombres</h6>
+                                                                                            <p id="modalNombresCliente" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Apellido Paterno</h6>
+                                                                                            <p id="modalApellidopCliente" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Apellido Materno</h6>
+                                                                                            <p id="modalApellidomCliente" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Razón Social</h6>
+                                                                                            <p id="modalRazonSocialCliente" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                          <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Actividad Principal</h6>
+                                                                                            <p id="modalActividadPrincipal" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <!-- Sección: Contacto -->
+                                                                        <div class="card mb-4 shadow-sm">
+                                                                            <div class="card-header bg-light">
+                                                                                <h5 class="mb-0 text-secondary">Información de Contacto</h5>
+                                                                            </div>
+                                                                            <div class="card-body">
+                                                                                <div class="row">
+                                                                                    <!-- Primera columna -->
+                                                                                    <div class="col-md-6">
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Teléfono</h6>
+                                                                                            <p id="modalTelefonoCliente" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Celular</h6>
+                                                                                            <p id="modalCelularCliente" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Email</h6>
+                                                                                            <p id="modalEmailCliente" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <!-- Segunda columna -->
+                                                                                    <div class="col-md-6">
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Departamento</h6>
+                                                                                            <p id="modalDepartamentoCliente" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Provincia</h6>
+                                                                                            <p id="modalProvinciaCliente" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Distrito</h6>
+                                                                                            <p id="modalDistritoCliente" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <!-- Sección: Dirección -->
+                                                                        <div class="card mb-4 shadow-sm">
+                                                                            <div class="card-header bg-light">
+                                                                                <h5 class="mb-0 text-secondary">Dirección</h5>
+                                                                            </div>
+                                                                            <div class="card-body">
+                                                                                <div class="row">
+                                                                                    <!-- Primera columna -->
+                                                                                    <div class="col-md-6">
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Urbanización</h6>
+                                                                                            <p id="modalUrbanizacionCliente" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Código Postal</h6>
+                                                                                            <p id="modalPostalCliente" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Número</h6>
+                                                                                            <p id="modalNumeroCliente" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <!-- Segunda columna -->
+                                                                                    <div class="col-md-6">
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Calle</h6>
+                                                                                            <p id="modalCalleCliente" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Vía</h6>
+                                                                                            <p id="modalViaCliente" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                        <div class="mb-3">
+                                                                                            <h6 class="fw-bold">Ventana de Atencion</h6>
+                                                                                            <p id="modalVentana" class="text-muted">N/A</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="tab-pane fade" id="view-tabs-one-representative" role="tabpanel" aria-labelledby="view-tabs-one-representative-tab">
+                                                                        <div class="container mb-4">
+                                                                            <h1 class="mb-4 text-primary text-center">Datos del Representante Legal</h1>
+
+                                                                            <!-- Sección: Información General -->
+                                                                            <div class="card mb-4 shadow-sm">
+                                                                                <div class="card-header bg-light">
+                                                                                    <h5 class="mb-0 text-secondary">Información General</h5>
+                                                                                </div>
+                                                                                <div class="card-body">
+                                                                                    <div class="row">
+                                                                                        <!-- Primera columna -->
+                                                                                        <div class="col-md-6">
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Tipo de Documento</h6>
+                                                                                                <p id="modalTipoDocumentoRepresentante" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Número de Documento</h6>
+                                                                                                <p id="modalNroDocumentoRepresentante" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <!-- Segunda columna -->
+                                                                                        <div class="col-md-6">
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Nombres</h6>
+                                                                                                <p id="modalNombresRepresentante" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Apellido Paterno</h6>
+                                                                                                <p id="modalApellidoPaternoRepresentante" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Apellido Materno</h6>
+                                                                                                <p id="modalApellidoMaternoRepresentante" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <!-- Sección: Información de Contacto -->
+                                                                            <div class="card mb-4 shadow-sm">
+                                                                                <div class="card-header bg-light">
+                                                                                    <h5 class="mb-0 text-secondary">Información del Representante</h5>
+                                                                                </div>
+                                                                                <div class="card-body">
+                                                                                    <div class="row">
+                                                                                        <!-- Primera columna -->
+                                                                                        <div class="col-md-6">
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Cargo en la Empresa</h6>
+                                                                                                <p id="modalCargoRepresentante" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Teléfono</h6>
+                                                                                                <p id="modalTelefonoRepresentante" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <!-- Segunda columna -->
+                                                                                        <div class="col-md-6">
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Celular</h6>
+                                                                                                <p id="modalCelularRepresentante" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Email Personal</h6>
+                                                                                                <p id="modalEmailPersonalRepresentante" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Email Empresarial</h6>
+                                                                                                <p id="modalEmailEmpresarialRepresentante" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="tab-pane fade" id="view-tabs-one-contact" role="tabpanel" aria-labelledby="view-tabs-one-contact-tab">
+                                                                        <div class="container mb-4">
+                                                                            <h1 class="mb-4 text-primary text-center">Datos del Contacto</h1>
+
+                                                                            <!-- Sección: Información General -->
+                                                                            <div class="card mb-4 shadow-sm">
+                                                                                <div class="card-header bg-light">
+                                                                                    <h5 class="mb-0 text-secondary">Información General</h5>
+                                                                                </div>
+                                                                                <div class="card-body">
+                                                                                    <div class="row">
+                                                                                        <!-- Primera columna -->
+                                                                                        <div class="col-md-6">
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Tipo de Documento</h6>
+                                                                                                <p id="modalTipoDocumentoContacto" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Número de Documento</h6>
+                                                                                                <p id="modalNroDocumentoContacto" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Tipo de Contacto</h6>
+                                                                                                <p id="modalTipo" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <!-- Segunda columna -->
+                                                                                        <div class="col-md-6">
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Nombres</h6>
+                                                                                                <p id="modalNombresContacto" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Apellido Paterno</h6>
+                                                                                                <p id="modalApellidoPaternoContacto" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Apellido Materno</h6>
+                                                                                                <p id="modalApellidoMaternoContacto" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <!-- Sección: Información de Contacto -->
+                                                                            <div class="card mb-4 shadow-sm">
+                                                                                <div class="card-header bg-light">
+                                                                                    <h5 class="mb-0 text-secondary">Información del Contacto</h5>
+                                                                                </div>
+                                                                                <div class="card-body">
+                                                                                    <div class="row">
+                                                                                        <!-- Primera columna -->
+                                                                                        <div class="col-md-6">
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Cargo en la Empresa</h6>
+                                                                                                <p id="modalCargoContacto" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Teléfono</h6>
+                                                                                                <p id="modalTelefonoContacto" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <!-- Segunda columna -->
+                                                                                        <div class="col-md-6">
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Celular</h6>
+                                                                                                <p id="modalCelularContacto" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Email Personal</h6>
+                                                                                                <p id="modalEmailPersonalContacto" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Email Empresarial</h6>
+                                                                                                <p id="modalEmailEmpresarialContacto" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                    <div class="tab-pane fade" id="view-tabs-one-commercial" role="tabpanel" aria-labelledby="view-tabs-one-commercial-tab">
+                                                                        <div class="container mb-4">
+                                                                            <h1 class="mb-4 text-primary text-center">Datos Comerciales</h1>
+
+                                                                            <!-- Sección: Información Comercial -->
+                                                                            <div class="card shadow-sm">
+                                                                                <div class="card-header bg-light">
+                                                                                    <h5 class="mb-0 text-secondary">Información Comercial</h5>
+                                                                                </div>
+                                                                                <div class="card-body">
+                                                                                    <div class="row mb-3">
+                                                                                        <!-- Canal de Venta -->
+                                                                                        <div class="col-md-6">
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Canal de Venta</h6>
+                                                                                                <p id="modalCanalVenta" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <!-- Zona -->
+                                                                                        <div class="col-md-6">
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Zona</h6>
+                                                                                                <p id="modalZona" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row">
+                                                                                        <!-- Ruta -->
+                                                                                        <div class="col-md-6">
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Ruta</h6>
+                                                                                                <p id="modalRuta" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <!-- Vendedor Asignado -->
+                                                                                        <div class="col-md-6">
+                                                                                            <div class="mb-3">
+                                                                                                <h6 class="fw-bold">Vendedor Asignado</h6>
+                                                                                                <p id="modalVendedor" class="text-muted">N/A</p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                  
+
+                                                                </div>
+
+
+
+                                                            </div>
+                                                        </div>
+                                                        <!-- /.card -->
+                                                    </div>
+
+
+
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                
+                                            </div>
+
+
+                                        </div>
+                                        <!-- /.modal-content -->
+                                    </div>
+                                    <!-- /.modal-dialog -->
+                                </div>
+
+
+                         
+
+                                <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                </div>
+                <!-- /.container-fluid -->
+            </section>
+
+
+            <!-- Main content -->
+           
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div>
+    <!-- ./wrapper -->
+    <!-- jQuery -->
+
+    <script>
+
+        //$('#mapModal').on('hidden.bs.modal', function () {
+        //    if ($('.modal-backdrop').length === 0) {
+        //        $('body').addClass('modal-open'); // Restaura la clase que permite el desplazamiento del modal principal
+        //    }
+        //});
+
+
+
+        let map;
+        let marker;
+        let geocoder;
+
+        function initMap() {
+            // Inicializar mapa
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: -12.046374, lng: -77.042793 }, // Coordenadas iniciales (Lima)
+                zoom: 12,
+            });
+
+            geocoder = new google.maps.Geocoder();
+
+            // Listener para seleccionar ubicación haciendo clic en el mapa
+            map.addListener("click", (event) => {
+                const coords = event.latLng;
+                setMarker(coords);
+                getAddressFromCoords(coords); // Obtener nombre de la ubicación
+            });
+        }
+
+        // Función para establecer marcador
+        function setMarker(location) {
+            if (marker) marker.setMap(null); // Eliminar marcador previo si existe
+
+            marker = new google.maps.Marker({
+                position: location,
+                map: map,
+            });
+
+         
+        }
+
+        // Función para obtener dirección a partir de coordenadas
+        function getAddressFromCoords(coords) {
+            geocoder.geocode({ location: coords }, (results, status) => {
+                if (status === "OK" && results[0]) {
+                    const address = results[0].formatted_address;
+                    document.getElementById("nombreDireccion").value = address; // Mostrar dirección en el input
+                } else {
+                    document.getElementById("nombreDireccion").value = "No se pudo obtener el nombre de la calle.";
+                }
+            });
+        }
+
+      
+
+        // Buscar dirección usando Geocoding
+        document.getElementById("searchBox").addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                const address = document.getElementById("searchBox").value.trim();
+
+                if (!address) {
+                    alert("Por favor, ingresa una dirección o coordenadas.");
+                    return;
+                }
+
+                // Usar Geocoder para buscar dirección
+                geocoder.geocode({ address: address }, (results, status) => {
+                    if (status === "OK") {
+                        const location = results[0].geometry.location;
+                        map.setCenter(location);
+                        map.setZoom(15);
+                        setMarker(location);
+                        getAddressFromCoords(location); // Obtener nombre de la ubicación
+                    } else {
+                        alert("No se pudo encontrar la ubicación: " + status);
+                    }
+                });
+            }
+        });
+
+        // Guardar ubicación seleccionada y cerrar modal
+        document.getElementById("saveLocation").addEventListener("click", () => {
+            $('#mapModal').modal('hide');
+        });
+
+        // Cargar el mapa cuando la página esté lista
+        document.addEventListener("DOMContentLoaded", () => {
+            initMap();
+        });
+
+
+
+
+    
+
+
+
+        //CARGAR CBO ZONA, CANALVENTA,RUTA, VENDEDOR
+        document.addEventListener("DOMContentLoaded", function () {
+            // Función para cargar los datos en los selects
+            function loadSelectData(url, selectId, defaultText) {
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        const select = document.getElementById(selectId);
+                        select.innerHTML = `<option value="">${defaultText}</option>`; // Opción por defecto
+
+                        // Verificar si los datos tienen el formato correcto
+                        if (data && data.length > 0) {
+                            data.forEach(item => {
+                                const option = document.createElement("option");
+
+                                // Dependiendo del tipo de dato (Canal, Zona, Ruta o Vendedor), usamos sus propiedades
+                                if (selectId === "canalventa") {
+                                    option.value = item.idCanal;
+                                    option.textContent = item.descripcion;
+                                } else if (selectId === "zona") {
+                                    option.value = item.idZona;
+                                    option.textContent = item.descripcion;
+                                } else if (selectId === "ruta") {
+                                    option.value = item.idRuta;
+                                    option.textContent = item.descripcion;
+                                } else if (selectId === "vendedor") {
+                                    option.value = item.idVendedor;
+                                    option.textContent = item.nombre;
+                                }
+
+                                select.appendChild(option);
+                            });
+                        } else {
+                            console.warn(`No data found for ${selectId}`);
+                        }
+                    })
+                    .catch(error => console.error('Error al cargar datos:', error));
+            }
+
+            // Cargar datos en los selects
+            loadSelectData("/Cliente/GetCanalesVenta", "canalventa", "Seleccione un canal de venta");
+            loadSelectData("/Cliente/GetZonas", "zona", "Seleccione una zona");
+            loadSelectData("/Cliente/GetRutas", "ruta", "Seleccione una ruta");
+            loadSelectData("/Cliente/GetVendedores", "vendedor", "Seleccione un vendedor");
+        });
+
+    
+        //CARGAR CBO DEL DEPAR, PRO,DIS PARA EL CLIENTE
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Referencias a los selects
+            const dptoSelect = document.getElementById('dptoCliente');
+            const provinciaSelect = document.getElementById('provinciaCliente');
+            const distritoSelect = document.getElementById('distritoCliente');
+
+            // Función para cargar provincias
+            dptoSelect.addEventListener('change', function () {
+                const departamentoId = this.value;
+
+                // Resetear los selects dependientes
+                provinciaSelect.innerHTML = '<option value="">Seleccione una provincia</option>';
+                provinciaSelect.disabled = true;
+                distritoSelect.innerHTML = '<option value="">Seleccione un distrito</option>';
+                distritoSelect.disabled = true;
+
+                if (departamentoId) {
+                    fetch(`/Cliente/GetProvincias?departamentoId=${departamentoId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.length > 0) {
+                                provinciaSelect.disabled = false;
+                                data.forEach(provincia => {
+                                    const option = new Option(provincia.nombreProvincia, provincia.idProvincia);
+                                    provinciaSelect.add(option);
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al cargar provincias:', error);
+                            alert('No se pudieron cargar las provincias. Inténtalo de nuevo.');
+                        });
+                }
+            });
+
+            // Función para cargar distritos
+            provinciaSelect.addEventListener('change', function () {
+                const provinciaId = this.value;
+
+                // Resetear distritos
+                distritoSelect.innerHTML = '<option value="">Seleccione un distrito</option>';
+                distritoSelect.disabled = true;
+
+                if (provinciaId) {
+                    fetch(`/Cliente/GetDistritos?provinciaId=${provinciaId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.length > 0) {
+                                distritoSelect.disabled = false;
+                                data.forEach(distrito => {
+                                    const option = new Option(distrito.nombreDistrito, distrito.idDistrito);
+                                    distritoSelect.add(option);
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al cargar distritos:', error);
+                            alert('No se pudieron cargar los distritos. Inténtalo de nuevo.');
+                        });
+                }
+            });
+        });
+
+        
+
+
+
+                //CARGAR CBO DEL DEPAR, PRO,DIS PARA EL CLIENTE PARA EDITARLO
+
+        // CARGAR CBO DEL DEPARTAMENTO, PROVINCIA, DISTRITO PARA EL CLIENTE AL EDITARLO
+        document.addEventListener('DOMContentLoaded', function () {
+            // Referencias a los selects
+            const dptoSelect = document.getElementById('dptoClienteEditar');
+            const provinciaSelect = document.getElementById('provinciaClienteEditar');
+            const distritoSelect = document.getElementById('distritoClienteEditar');
+
+            // Función para cargar los datos iniciales del cliente
+            function cargarDatosCliente(idCliente) {
+                fetch(`/Cliente/ObtenerMaestroCliente?id=${idCliente}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data) {
+                            // Establecer los valores iniciales
+                            dptoSelect.value = data.idDepartamento;
+                            cargarProvincias(data.idDepartamento, data.idProvincia);
+                            cargarDistritos(data.idProvincia, data.idDistrito);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar datos del cliente:', error);
+                        alert('No se pudieron cargar los datos del cliente. Inténtalo de nuevo.');
+                    });
+            }
+
+            // Función para cargar provincias basado en el departamento
+            function cargarProvincias(departamentoId, provinciaIdSeleccionada = null) {
+                if (departamentoId) {
+                    fetch(`/Cliente/GetProvincias?departamentoId=${departamentoId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            provinciaSelect.innerHTML = '<option value="">Seleccione una provincia</option>';
+                            provinciaSelect.disabled = false;
+
+                            data.forEach(provincia => {
+                                const option = new Option(provincia.nombreProvincia, provincia.idProvincia);
+                                if (provincia.idProvincia === provinciaIdSeleccionada) {
+                                    option.selected = true;
+                                }
+                                provinciaSelect.add(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error al cargar provincias:', error);
+                            alert('No se pudieron cargar las provincias. Inténtalo de nuevo.');
+                        });
+                }
+            }
+
+            // Función para cargar distritos basado en la provincia
+            function cargarDistritos(provinciaId, distritoIdSeleccionado = null) {
+                if (provinciaId) {
+                    fetch(`/Cliente/GetDistritos?provinciaId=${provinciaId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            distritoSelect.innerHTML = '<option value="">Seleccione un distrito</option>';
+                            distritoSelect.disabled = false;
+
+                            data.forEach(distrito => {
+                                const option = new Option(distrito.nombreDistrito, distrito.idDistrito);
+                                if (distrito.idDistrito === distritoIdSeleccionado) {
+                                    option.selected = true;
+                                }
+                                distritoSelect.add(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error al cargar distritos:', error);
+                            alert('No se pudieron cargar los distritos. Inténtalo de nuevo.');
+                        });
+                }
+            }
+
+            // Evento para cargar provincias cuando cambia el departamento
+            dptoSelect.addEventListener('change', function () {
+                const departamentoId = this.value;
+
+                provinciaSelect.innerHTML = '<option value="">Seleccione una provincia</option>';
+                provinciaSelect.disabled = true;
+                distritoSelect.innerHTML = '<option value="">Seleccione un distrito</option>';
+                distritoSelect.disabled = true;
+
+                cargarProvincias(departamentoId);
+            });
+
+            // Evento para cargar distritos cuando cambia la provincia
+            provinciaSelect.addEventListener('change', function () {
+                const provinciaId = this.value;
+
+                distritoSelect.innerHTML = '<option value="">Seleccione un distrito</option>';
+                distritoSelect.disabled = true;
+
+                cargarDistritos(provinciaId);
+            });
+
+            // Cargar los datos del cliente al iniciar la página
+            const clienteId = document.getElementById('clienteId').value; // Ajusta según tu lógica para obtener el ID del cliente
+            if (clienteId) {
+                cargarDatosCliente(clienteId);
+            }
+        });
+
+
+
+
+
+
+       
+
+
+
+        //CONSULTA DE DNI PARA EL CLIENTE
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Referencias a los elementos del DOM
+            const tipoDocumentoInput = document.getElementById("tipoDocumentoCliente");
+            const numeroDocumentoInput = document.getElementById("numeroDocumentoCliente");
+            const btnBuscarDocumento = document.getElementById("btnBuscarDocumento");
+            const nombresInput = document.getElementById("nombresCliente");
+            const apellidoPaternoInput = document.getElementById("apellidoPaternoCliente");
+            const apellidoMaternoInput = document.getElementById("apellidoMaternoCliente");
+            const razonSocialInput = document.getElementById("razonSocialCliente");
+            const nombreDireccionInput = document.getElementById("nombreDireccion");
+
+            // Evento para el botón de buscar documento
+            btnBuscarDocumento.addEventListener("click", function () {
+                const tipoDocumento = tipoDocumentoInput.value.trim();  // DNI o RUC
+                const numeroDocumento = numeroDocumentoInput.value.trim();
+
+                // Validar que se ingrese un número de documento
+                if (numeroDocumento === "") {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Error!',
+                        text: 'Por favor, ingrese un número de documento.',
+                    });
+                    return;
+                }
+
+                // Llamada a la API según el tipo de documento
+                let url;
+                if (tipoDocumento === "dni") {
+                    if (numeroDocumento.length !== 8 || isNaN(numeroDocumento)) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '¡Error!',
+                            text: 'El DNI debe tener 8 dígitos numéricos.',
+                        });
+                        return;
+                    }
+                    url = `/BuscarPorDNI/${numeroDocumento}`;
+                } else if (tipoDocumento === "ruc") {
+                    if (numeroDocumento.length !== 11 || isNaN(numeroDocumento)) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '¡Error!',
+                            text: 'El RUC debe tener 11 dígitos numéricos.',
+                        });
+                        return;
+                    }
+                    url = `/BuscarPorRUC/${numeroDocumento}`;
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Error!',
+                        text: 'Tipo de documento no válido.',
+                    });
+                    return;
+                }
+
+                // Realizar la búsqueda en la API
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("No se encontró información para el documento proporcionado.");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Rellenar los campos del formulario según el tipo de documento
+                        if (tipoDocumento === "dni") {
+                            nombresInput.value = data.nombres || "";
+                            apellidoPaternoInput.value = data.apellidoPaterno || "";
+                            apellidoMaternoInput.value = data.apellidoMaterno || "";
+                            razonSocialInput.value = "";
+                            nombreDireccionInput.value = "";
+                        } else if (tipoDocumento === "ruc") {
+                            razonSocialInput.value = data.razonSocial || "";
+                            nombreDireccionInput.value = data.direccion || "";
+                            nombresInput.value = "";
+                            apellidoPaternoInput.value = "";
+                            apellidoMaternoInput.value = "";
+                        }
+                    })
+                    .catch(error => {
+                        // Mostrar un mensaje de error si no se encuentra el documento
+                        Swal.fire({
+                            icon: 'error',
+                            title: '¡Error!',
+                            text: error.message,
+                        });
+                    });
+            });
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // CONSULTA DE DNI PARA EL REPRESENTANTE
+
+        // Referencias a los elementos del DOM
+        const tipoDocumentoRepresentante = document.getElementById("tipodeDocumentoRepresentante");
+        const documentNumberInput = document.getElementById("documentoDniRepresentante");
+        const buscarDNIRepresentanteButton = document.getElementById("buscarDNIRepresentante");
+        const apellidoPaternoRepresentanteInput = document.getElementById("ApellidoPaternoRepresentante");
+        const apellidoMaternoRepresentanteInput = document.getElementById("ApellidoMaternoRepresentante");
+        const nombresRepresentanteInput = document.getElementById("nombresRepresentante");
+
+        // Evento para el botón de buscar documento (solo para DNI)
+        buscarDNIRepresentanteButton.addEventListener("click", function () {
+            const documentType = tipoDocumentoRepresentante.value.trim();  // Tipo de documento (siempre será DNI en este caso)
+            const documentoDniRepresentante = documentNumberInput.value.trim();
+
+            // Validar que se ingrese un número de documento
+            if (documentoDniRepresentante === "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: 'Por favor, ingrese un número de DNI.',
+                });
+                return;
+            }
+
+            // Validación de que el DNI tenga 8 dígitos
+            if (documentType === "dni" && (documentoDniRepresentante.length !== 8 || isNaN(documentoDniRepresentante))) {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: 'El DNI debe tener 8 dígitos numéricos.',
+                });
+                return;
+            }
+
+            // Realizar la búsqueda del representante con el DNI
+            const url = `/BuscarPorDNI/${documentoDniRepresentante}`;
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("No se encontró información para el DNI proporcionado.");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Rellenar los campos con la información obtenida
+                    apellidoPaternoRepresentanteInput.value = data.apellidoPaterno || "";
+                    apellidoMaternoRepresentanteInput.value = data.apellidoMaterno || "";
+                    nombresRepresentanteInput.value = data.nombres || "";
+                })
+                .catch(error => {
+                    // Mostrar un mensaje de error si no se encuentra el DNI
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Error!',
+                        text: error.message,
+                    });
+                });
+        });
+
+
+        // CONSULTA DE DNI PARA EL CONTACTO
+
+        // Referencias a los elementos del DOM
+        const tipoDocumentoContacto = document.getElementById("tipoDocumentoContacto");
+        const documentNumberInputContacto = document.getElementById("documentNumberContacto");
+        const buscarDNIContactoButton = document.getElementById("buscarDNIContacto");
+        const apellidoPaternoContactoInput = document.getElementById("apellidoPaternoContacto");
+        const apellidoMaternoContactoInput = document.getElementById("apellidoMaternoContacto");
+        const nombreContactoInput = document.getElementById("nombreContacto");
+        const dniContactoInput = document.getElementById("dniContacto");
+
+        // Evento para el botón de búsqueda de documento
+        buscarDNIContactoButton.addEventListener("click", function () {
+            const documentType = tipoDocumentoContacto.value.trim();  // Tipo de documento seleccionado
+            const documentNumber = documentNumberInputContacto.value.trim();
+
+            // Validar que se ingrese un número de documento
+            if (documentNumber === "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: 'Por favor, ingrese un número de documento.',
+                });
+                return;
+            }
+
+            // Validación según el tipo de documento seleccionado
+            if (documentType === "dni" && (documentNumber.length !== 8 || isNaN(documentNumber))) {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: 'El DNI debe tener 8 dígitos numéricos.',
+                });
+                return;
+            }
+
+            if (documentType === "ce" && (documentNumber.length < 6 || documentNumber.length > 9 || isNaN(documentNumber))) {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: 'El CE debe tener entre 6 y 9 dígitos numéricos.',
+                });
+                return;
+            }
+
+            if (documentType === "ci" && (documentNumber.length !== 7 || isNaN(documentNumber))) {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: 'La CI debe tener 7 dígitos numéricos.',
+                });
+                return;
+            }
+
+            // Realizar la búsqueda del contacto con el documento proporcionado
+            const url = `/BuscarPorDNI/${documentNumber}`;
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("No se encontró información para el documento proporcionado.");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const contactoData = data; // Asumiendo que la respuesta tiene los datos del contacto
+
+                    // Rellenar los campos en el primer tab
+                    if (document.getElementById("apellidoPaternoContacto")) {
+                        document.getElementById("apellidoPaternoContacto").value = contactoData.apellidoPaterno || "";
+                    }
+                    if (document.getElementById("apellidoMaternoContacto")) {
+                        document.getElementById("apellidoMaternoContacto").value = contactoData.apellidoMaterno || "";
+                    }
+                    if (document.getElementById("nombreContacto")) {
+                        document.getElementById("nombreContacto").value = contactoData.nombres || "";
+                    }
+                    if (document.getElementById("dniContacto")) {
+                        document.getElementById("dniContacto").value = contactoData.numeroDocumento || "";
+                    }
+
+                    // Rellenar los campos en el formulario de dirección (segundo tab)
+                    if (document.getElementById("apellidoPaternoContactoDIRECCION")) {
+                        document.getElementById("apellidoPaternoContactoDIRECCION").value = contactoData.apellidoPaterno || "";
+                    }
+                    if (document.getElementById("apellidoMaternoContactoDIRECCION")) {
+                        document.getElementById("apellidoMaternoContactoDIRECCION").value = contactoData.apellidoMaterno || "";
+                    }
+                    if (document.getElementById("nombreContactoDIRECCION")) {
+                        document.getElementById("nombreContactoDIRECCION").value = contactoData.nombres || "";
+                    }
+                    if (document.getElementById("dniCONTACTODIRECCION")) {
+                        document.getElementById("dniCONTACTODIRECCION").value = contactoData.numeroDocumento || "";
+                    }
+                })
+                .catch(error => {
+                    // Mostrar un mensaje de error si no se encuentra el documento
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Error!',
+                        text: error.message,
+                    });
+                });
+        });
+
+
+
+
+     
+    </script>
+
+
+
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeYuFoBVAwefqpP2lz6AJ4chwdNgD0vDw&libraries=places&callback=initMap"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script src="@Url.Content("~/plugins/jquery/jquery.min.js")"></script>
+   
+    <!-- Bootstrap 4 -->
+    <script src="@Url.Content("~/plugins/bootstrap/js/bootstrap.bundle.min.js")"></script>
+    <!-- DataTables  & Plugins -->
+    <script src="@Url.Content("~/plugins/datatables/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-responsive/js/dataTables.responsive.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/dataTables.buttons.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js")"></script>
+    <script src="@Url.Content("~/plugins/jszip/jszip.min.js")"></script>
+    <script src="@Url.Content("~/plugins/pdfmake/pdfmake.min.js")"></script>
+    <script src="@Url.Content("~/plugins/pdfmake/vfs_fonts.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.html5.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.print.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.colVis.min.js")"></script>
+    <!-- AdminLTE App -->
+    <script src="@Url.Content("~/dist/js/adminlte.min.js")"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="@Url.Content("~/dist/js/demo.js")"></script>
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Page specific script -->
+    <script src="~/js/Cliente.js" asp-append-version="true"></script>
+
+
+</body>
+</html>
+

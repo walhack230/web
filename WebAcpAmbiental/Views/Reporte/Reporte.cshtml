@@ -1,0 +1,352 @@
+﻿@model List<WebAcpAmbiental.Models.MaestroCliente>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdminLTE 3 | DataTables</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/fontawesome-free/css/all.min.css")">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="@Url.Content("~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css")">
+    <link rel="stylesheet" href="@Url.Content("~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css")">
+    <link rel="stylesheet" href="@Url.Content("~/plugins/datatables-buttons/css/buttons.bootstrap4.min.css")">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="@Url.Content("~/dist/css/adminlte.min.css")">
+
+    <style>
+
+        .icon-circle {
+            font-size: 16px;
+            padding: 4px;
+            border-radius: 50%;
+            color: white; /* Cambiar a blanco para los iconos */
+        }
+
+    </style>
+</head>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <!-- Navbar -->
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1>Reportes</h1>
+                        </div>
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="@Url.Action("Principal", "Reporte")">Principal</a></li>
+
+
+                                <li class="breadcrumb-item active">Reportes</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-12">
+                        <div class="card card-primary card-tabs">
+                            <div class="card-header p-0 pt-1">
+                                <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">Listado de Clientes</a>
+                                    </li>
+                                  
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="custom-tabs-one-settings-tab" data-toggle="pill" href="#custom-tabs-one-settings" role="tab" aria-controls="custom-tabs-one-settings" aria-selected="false">Clientes con Direccion Atencion</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="custom-tabs-one-programacion-tab" data-toggle="pill" href="#custom-tabs-one-programacion" role="tab" aria-controls="custom-tabs-one-programacion" aria-selected="false">Resultado de la Programacion</a>
+                                    </li>
+                                  
+                                </ul>
+                            </div>
+                            <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-one-tabContent">
+                                    <div class="tab-pane fade active show" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
+
+                                        <section class="content">
+                                            <div class="container-fluid">
+
+                                                <div class="row">
+                                                    <div class="col-12">
+
+                                                        <div class="card">
+                                                            <div class="card-header">
+                                                                <h1 class="card-title">Listado de Clientes</h1>
+                                                            </div>
+                                                            <!-- /.card-header -->
+                                                            <div class="card-body">
+                                                                <table id="example1" class="table table-bordered table-striped">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>ID</th>
+                                                                            <th>Cliente</th>
+                                                                            <th>Tipo del Cliente</th>
+                                                                            <th>Tipo del Documento</th>
+                                                                            <th>Nro de Documento</th>
+                                                                            <th>Direccion del Cliente</th>
+                                                                            <th>Zona</th>
+                                                                            <th>Ruta</th>
+                                                                            <th>Canal</th>
+                                                                            <th>Vendedor Asignado</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @foreach (var cliente in ViewBag.ListadoClientes)
+                                                                        {
+                                                                            <tr>
+                                                                                <td>@cliente.IdCliente</td>
+                                                                                <td>@cliente.NombreCompleto</td>
+                                                                                <td>@cliente.TipoCliente</td>
+                                                                                <td>@cliente.DocumentoCliente</td>
+                                                                                <td>@cliente.NrodocumentoCliente</td>
+                                                                                <td>@cliente.CalledireccionCliente</td>
+                                                                                <td>
+                                                                                    @if (cliente.IdAsignacionNavigation?.IdZonaNavigation?.Descripcion == null)
+                                                                                    {
+                                                                                        @:No está asignado
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @cliente.IdAsignacionNavigation.IdZonaNavigation.Descripcion
+                                                                                    }
+                                                                                </td>
+                                                                                <td>
+                                                                                    @if (cliente.IdAsignacionNavigation?.IdRutaNavigation?.Descripcion == null)
+                                                                                    {
+                                                                                        @:No está asignado
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @cliente.IdAsignacionNavigation.IdRutaNavigation.Descripcion
+                                                                                    }
+                                                                                </td>
+                                                                                <td>
+                                                                                    @if (cliente.IdAsignacionNavigation?.IdCanalNavigation?.Descripcion == null)
+                                                                                    {
+                                                                                        @:No está asignado
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @cliente.IdAsignacionNavigation.IdCanalNavigation.Descripcion
+                                                                                    }
+                                                                                </td>
+                                                                                <td>
+                                                                                    @if (cliente.IdAsignacionNavigation?.IdUsuarioNavigation?.NombreUsuario == null)
+                                                                                    {
+                                                                                        @:No está asignado
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @cliente.IdAsignacionNavigation.IdUsuarioNavigation.NombreUsuario
+                                                                                    }
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+
+                                                            </div>
+
+                                                            <!-- /.card-body -->
+                                                        </div>
+                                                        <!-- /.card -->
+                                                    </div>
+                                                    <!-- /.col -->
+                                                </div>
+                                                <!-- /.row -->
+                                            </div>
+                                            <!-- /.container-fluid -->
+                                        </section>
+
+                                    </div>
+
+                                    
+                                  
+                                    <div class="tab-pane fade" id="custom-tabs-one-settings" role="tabpanel" aria-labelledby="custom-tabs-one-settings-tab">
+                                        <h1 class="mb-4"> Clientes por Dirección de Atención</h1>
+
+
+                                        <section class="content">
+                                            <div class="container-fluid">
+
+                                                <div class="row">
+                                                    <div class="col-12">
+
+                                                        <div class="card">
+                                                            
+                                                            <!-- /.card-header -->
+                                                            <div class="card-body">
+                                                                <table id="example2" class="table table-bordered table-striped">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>ID</th>
+                                                                            <th>Cliente</th>
+                                                                            <th>Dirección de la Calle</th>
+                                                                            <th>Departamento</th>
+                                                                            <th>Provincia</th>
+                                                                            <th>Distrito</th>
+                                                                            <th>Coordenadas</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @foreach (var direccion in ViewBag.ListadoDireccionesConClientes)
+                                                                        {
+                                                                            <tr>
+                                                                                <td>@direccion.IdDireccion</td>
+                                                                                <td>@direccion.NombreCliente</td>
+                                                                                <td>@direccion.CalleDireccion</td>
+                                                                                <td>@direccion.NombreDepartamento</td>
+                                                                                <td>@direccion.NombreProvincia</td>
+                                                                                <td>@direccion.NombreDistrito</td>
+                                                                                <td>@direccion.CoordenadasDireccion</td>
+                                                                            </tr>
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+
+                                                            </div>
+
+                                                            <!-- /.card-body -->
+                                                        </div>
+                                                        <!-- /.card -->
+                                                    </div>
+                                                    <!-- /.col -->
+                                                </div>
+                                                <!-- /.row -->
+                                            </div>
+                                            <!-- /.container-fluid -->
+                                        </section>
+
+                                    </div>
+
+                                    <div class="tab-pane fade" id="custom-tabs-one-programacion" role="tabpanel" aria-labelledby="custom-tabs-one-programacion-tab">
+
+                                        <section class="content">
+                                            <div class="container-fluid">
+
+                                                <div class="row">
+                                                    <div class="col-12">
+
+                                                        <div class="card">
+                                                            <div class="card-header">
+                                                                <h1 class="card-title">Listado de Programaciones con Resultado</h1>
+                                                            </div>
+                                                            <!-- /.card-header -->
+                                                            <div class="card-body">
+                                                                <table id="example3" class="table table-bordered table-striped">
+                                                                    <thead>
+                                                                        <tr>
+                                                                          
+                                                                            <th>Cliente</th>
+                                                                            <th>Tipo del Cliente</th>
+                                                                            <th>Tipo del Documento</th>
+                                                                            <th>Nro de Documento</th>
+                                                                            <th>Direccion del Cliente</th>
+                                                                            <th>Dia Programado</th>
+                                                                            <th>Resultado</th>
+                                                                            <th>Comentario</th>
+                                                                           
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @foreach (var programacion in ViewBag.ListadoProgramaciones)
+                                                                        {
+                                                                            <tr>
+                                                                                <td>@programacion.NombreCompleto</td>
+                                                                                <td>@programacion.TipoCliente</td>
+                                                                                <td>@programacion.DocumentoCliente</td>
+                                                                                <td>@programacion.NrodocumentoCliente</td>
+                                                                                <td>@programacion.CalledireccionCliente</td>
+                                                                                <td>@programacion.DiaProgramado</td>
+                                                                                <td>@programacion.Resultado</td>
+                                                                                <td>@programacion.Comentario</td>
+                                                                            </tr>
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+
+                                                            </div>
+
+                                                            <!-- /.card-body -->
+                                                        </div>
+                                                        <!-- /.card -->
+                                                    </div>
+                                                    <!-- /.col -->
+                                                </div>
+                                                <!-- /.row -->
+                                            </div>
+                                            <!-- /.container-fluid -->
+                                        </section>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- /.card -->
+                        </div>
+                    </div>
+
+                </div><!-- /.container-fluid -->
+            </section>
+
+
+
+
+          
+            <!-- /.content -->
+        </div>
+
+
+       
+        <!-- /.content-wrapper -->
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div>
+    <!-- ./wrapper -->
+    <!-- jQuery -->
+    <script src="@Url.Content("~/plugins/jquery/jquery.min.js")"></script>
+    <!-- Bootstrap 4 -->
+    <script src="@Url.Content("~/plugins/bootstrap/js/bootstrap.bundle.min.js")"></script>
+    <!-- DataTables  & Plugins -->
+    <script src="@Url.Content("~/plugins/datatables/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-responsive/js/dataTables.responsive.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/dataTables.buttons.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js")"></script>
+    <script src="@Url.Content("~/plugins/jszip/jszip.min.js")"></script>
+    <script src="@Url.Content("~/plugins/pdfmake/pdfmake.min.js")"></script>
+    <script src="@Url.Content("~/plugins/pdfmake/vfs_fonts.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.html5.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.print.min.js")"></script>
+    <script src="@Url.Content("~/plugins/datatables-buttons/js/buttons.colVis.min.js")"></script>
+    <!-- AdminLTE App -->
+    <script src="@Url.Content("~/dist/js/adminlte.min.js")"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="@Url.Content("~/dist/js/demo.js")"></script>
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Page specific script -->
+
+    <script src="~/js/Reporte.js" asp-append-version="true"></script>
+    <script>
+
+    </script>
+</body>
+</html>
